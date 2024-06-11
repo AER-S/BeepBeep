@@ -10,8 +10,6 @@ public class ACardSlot : MonoBehaviour
         get => Card;
         private set
         {
-            if(!value) return;
-            Card = value;
             IsEmpty = false;
         }
     }

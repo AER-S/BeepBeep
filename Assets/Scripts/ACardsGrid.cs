@@ -6,8 +6,8 @@ public class ACardsGrid : MonoBehaviour
 {
     [SerializeField] private ACard CardPrefab;
     [SerializeField] private ACardSlot CardSlotPrefab;
-    public uint Raws { get; private set; }
-    public uint Columns { get; private set; }
+    [field:SerializeField]public uint Raws { get; private set; }
+    [field:SerializeField]public uint Columns { get; private set; }
 
     private ACardSlot[] _cardSlots;
     

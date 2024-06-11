@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ACard : MonoBehaviour
 {
-    [SerializeField] public uint Value { get; set; }
+    [field:SerializeField] public uint Value { get; set; }
     
     public bool Isflipped { get; private set; }
 
