@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class ACard : MonoBehaviour
 {
@@ -8,8 +9,12 @@ public class ACard : MonoBehaviour
     [SerializeField] private Texture FrontTexture;
     [SerializeField] private MeshRenderer Back;
     [SerializeField] private MeshRenderer Front;
-    [field:SerializeField] public uint Value { get; set; }
+    [SerializeField] private VisualProvider VisualProvider;
     
+
+    [field: SerializeField]
+    public int Value { get; set; }
+
     public bool Isflipped { get; private set; }
 
     public ACard()
@@ -18,7 +23,7 @@ public class ACard : MonoBehaviour
         Isflipped = false;
     }
 
-    public ACard(uint value) : this()
+    public ACard(int value) : this()
     {
         Value = value;
     }
@@ -30,6 +35,7 @@ public class ACard : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        FrontTexture = VisualProvider.GetTexture(Value);
         Front.material.mainTexture = FrontTexture;
     }
 }

@@ -5,11 +5,13 @@ using UnityEngine;
 
 public class ACardSlot : MonoBehaviour
 {
+    private ACard _card;
     public ACard Card
     {
-        get => Card;
+        get => _card;
         private set
         {
+            _card = value;
             IsEmpty = false;
         }
     }

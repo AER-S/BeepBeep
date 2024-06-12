@@ -59,6 +59,7 @@ MonoBehaviour:
   FrontTexture: {fileID: 2800000, guid: 70646d8ba1f3a4b4e9d6b19e51ab60af, type: 3}
   Back: {fileID: 8622853495884464216}
   Front: {fileID: 4102864542331043282}
+  VisualProvider: {fileID: 11400000, guid: ac4b9a0e452df7a4b8b28c478d34c11d, type: 2}
   <Value>k__BackingField: 0
 --- !u!1 &7712751266750570594
 GameObject:

@@ -11,6 +11,7 @@ public class ACardsGrid : MonoBehaviour
     [field:SerializeField]public int Rows { get; private set; }
     [field:SerializeField]public int Columns { get; private set; }
 
+    [SerializeField]private VisualProvider VisualProvider;
     private ACardSlot[] _cardSlots;
     
 
@@ -27,7 +28,8 @@ public class ACardsGrid : MonoBehaviour
     {
         var SpawnPosition = GetPosition(position);
         _cardSlots[position] = Instantiate<ACardSlot>(CardSlotPrefab,SpawnPosition,Quaternion.identity);
-        _cardSlots[position].FillSlot(Instantiate(CardPrefab,SpawnPosition,Quaternion.identity));
+        _cardSlots[position].FillSlot(Instantiate<ACard>(CardPrefab, SpawnPosition, Quaternion.identity));
+        _cardSlots[position].Card.Value = position % VisualProvider.GetTextures().Length;
     }
 
     Vector3 GetPosition(int i)
