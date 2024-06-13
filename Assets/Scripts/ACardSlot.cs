@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -5,18 +6,10 @@ using UnityEngine;
 
 public class ACardSlot : MonoBehaviour
 {
-    private ACard _card;
     public ACard Card
-    {
-        get => _card;
-        private set
-        {
-            _card = value;
-            IsEmpty = false;
-        }
-    }
+    { get; private set; }
 
-    public bool IsEmpty { get; private set; }
+    
 
     public void FillSlot(ACard card)
     {
@@ -25,13 +18,16 @@ public class ACardSlot : MonoBehaviour
 
     public void ClearSlot()
     {
-        Destroy(Card);
-        IsEmpty = true;
+        Destroy(Card.gameObject);
+        Destroy(gameObject);
+    }
+
+    private void OnMouseDown()
+    {
+        if(!Card.Isflipped) return;
+        AGameManager.Instance.TakeSlot(this);
+        Card.Flip();
     }
     
-    void Start()
-    {
-        
-    }
     
 }

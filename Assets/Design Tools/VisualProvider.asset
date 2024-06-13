@@ -12,4 +12,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60080ce4dab9aba4288cbf6c33612bd1, type: 3}
   m_Name: VisualProvider
   m_EditorClassIdentifier: 
-  Textures: []
+  Textures:
+  - {fileID: 2800000, guid: 505dac848409a1c4183b99b68add0239, type: 3}
+  - {fileID: 2800000, guid: 6e8daea9c5d1adf4fb5b5733f6a016ca, type: 3}
+  - {fileID: 2800000, guid: 96fc6530d51887445940eae24671c22e, type: 3}
+  - {fileID: 2800000, guid: df792d5dec4c8b2428586cbe6b3e707b, type: 3}
+  - {fileID: 2800000, guid: 68e96f318c6ff0a43ae1f5e42bc1c8c2, type: 3}
+  - {fileID: 2800000, guid: 336bd2743964a3447862e0a545613a3f, type: 3}
+  - {fileID: 2800000, guid: 857be0f8ecdac0847b98318b37d6b204, type: 3}
+  - {fileID: 2800000, guid: 4d55c8c7b4cbbfa4f873c9ed6da031c3, type: 3}
+  - {fileID: 2800000, guid: 67b65703f7c8f9148b137a0e2dd3699c, type: 3}
+  - {fileID: 2800000, guid: 98e394fc96ed50f4cae4d96e5ce49710, type: 3}
+  - {fileID: 2800000, guid: 8e3aafdd854414d4085d6b86ab8a9dc5, type: 3}
+  - {fileID: 2800000, guid: 9bae8d88d2ddcd34e8773671319f1c97, type: 3}
+  - {fileID: 2800000, guid: 2818e60583669bb4b83407e82081e4d4, type: 3}

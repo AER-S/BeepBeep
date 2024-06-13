@@ -17,24 +17,18 @@ public class ACard : MonoBehaviour
 
     public bool Isflipped { get; private set; }
 
-    public ACard()
-    {
-        Value = 0;
-        Isflipped = false;
-    }
-
-    public ACard(int value) : this()
-    {
-        Value = value;
-    }
-
     public void Flip()
     {
         Isflipped= !Isflipped;
+        var rotation = transform.eulerAngles;
+        rotation = new Vector3(rotation.x, rotation.y + 180,rotation.z);
+        transform.eulerAngles = rotation;
     }
+    
     // Start is called before the first frame update
     void Start()
     {
+        Isflipped = true;
         FrontTexture = VisualProvider.GetTexture(Value);
         Front.material.mainTexture = FrontTexture;
     }

@@ -151,14 +151,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86f0fd4fbbb7394448612903ed829812, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Width: 21
-  Height: 20
+  Width: 16
+  Height: 16
   CardPrefab: {fileID: -4216070001518647358, guid: a9c7c383a58ce9d4c9d3f7b43acc94e1,
     type: 3}
   CardSlotPrefab: {fileID: 1815852723985304303, guid: fd3ed96f4822e8a48a6aa3cef457d900,
     type: 3}
-  <Rows>k__BackingField: 3
-  <Columns>k__BackingField: 5
+  <Rows>k__BackingField: 4
+  <Columns>k__BackingField: 6
+  VisualProvider: {fileID: 11400000, guid: ac4b9a0e452df7a4b8b28c478d34c11d, type: 2}
+  Variations: 6
 --- !u!4 &70774604
 Transform:
   m_ObjectHideFlags: 0
@@ -173,6 +175,51 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &134582726
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 134582728}
+  - component: {fileID: 134582727}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &134582727
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134582726}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ab3d168d23e6064da1fc3c8127cbe9b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CardsGrid: {fileID: 70774603}
+--- !u!4 &134582728
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 134582726}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.19717506, y: 7.6527295, z: -2.8166475}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &330585543
 GameObject:

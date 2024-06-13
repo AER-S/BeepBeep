@@ -44,14 +44,14 @@ public class ACardsGrid : MonoBehaviour
     private Dictionary<int, int> GetDistribution(int baseWeight)
     {
         var upperWeightCount = (Rows * Columns) % Variations;
-        Debug.Log("UpperWeightCount= "+upperWeightCount);
+        //Debug.Log("UpperWeightCount= "+upperWeightCount);
         Dictionary<int, int> Distributions = new Dictionary<int, int>();
         for (int i = 0; i < Variations; i++)
         {
             int value = GetRandomValue(Distributions);
             int weight = (i < upperWeightCount) ? (baseWeight + 1) : baseWeight;
             Distributions.Add(value,weight);
-            Debug.Log("value= "+value+ " weight: "+ weight);
+            //Debug.Log("value= "+value+ " weight: "+ weight);
         }
 
         return Distributions;
