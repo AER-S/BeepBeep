@@ -158,7 +158,7 @@ MonoBehaviour:
   CardSlotPrefab: {fileID: 1815852723985304303, guid: fd3ed96f4822e8a48a6aa3cef457d900,
     type: 3}
   <Rows>k__BackingField: 4
-  <Columns>k__BackingField: 6
+  <Columns>k__BackingField: 4
   VisualProvider: {fileID: 11400000, guid: ac4b9a0e452df7a4b8b28c478d34c11d, type: 2}
   Variations: 6
 --- !u!4 &70774604
@@ -187,7 +187,7 @@ GameObject:
   - component: {fileID: 134582728}
   - component: {fileID: 134582727}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

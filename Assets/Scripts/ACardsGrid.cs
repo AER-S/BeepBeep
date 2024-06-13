@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
 public class ACardsGrid : MonoBehaviour
@@ -20,8 +22,6 @@ public class ACardsGrid : MonoBehaviour
     private ACardSlot[] _cardSlots;
     private Vector3 _scale;
     
-    
-
     void Start()
     {
         _scale = GetScale();
@@ -84,10 +84,10 @@ public class ACardsGrid : MonoBehaviour
     {
         var spawnPosition = GetPosition(position);
         _cardSlots[position] = Instantiate<ACardSlot>(CardSlotPrefab,spawnPosition,Quaternion.identity);
-        _cardSlots[position].transform.localScale = _scale;
         _cardSlots[position].FillSlot(Instantiate<ACard>(CardPrefab, spawnPosition, Quaternion.identity));
+        _cardSlots[position].Card.transform.SetParent(_cardSlots[position].transform);
         _cardSlots[position].Card.Value = cardValue;
-        _cardSlots[position].Card.transform.localScale = _scale;
+        _cardSlots[position].transform.localScale = _scale;
     }
 
     Vector3 GetPosition(int i)
@@ -103,8 +103,8 @@ public class ACardsGrid : MonoBehaviour
 
     Vector3 GetScale()
     {
-        float WidthScale = (Width-1) / ((float)Columns * 3);
-        float HeightScale = (Height-1) / ((float)Rows * 5);
-        return new Vector3(WidthScale, HeightScale, 1);
+        float WidthScale = (Width) / ((float)Columns * 3);
+        float HeightScale = (Height) / ((float)Rows * 5);
+        return new Vector3(WidthScale*0.9f, HeightScale*0.9f, 1);
     }
 }

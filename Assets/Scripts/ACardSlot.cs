@@ -9,25 +9,26 @@ public class ACardSlot : MonoBehaviour
     public ACard Card
     { get; private set; }
 
-    
+    public bool IsEmpty { get; private set; }
 
     public void FillSlot(ACard card)
     {
         Card = card;
+        IsEmpty = false;
     }
 
     public void ClearSlot()
     {
-        Destroy(Card.gameObject);
-        Destroy(gameObject);
+        Card.Destroy();
+        IsEmpty = true;
     }
 
     private void OnMouseDown()
     {
+        if(IsEmpty) return;
         if(!Card.Isflipped) return;
         AGameManager.Instance.TakeSlot(this);
         Card.Flip();
     }
-    
     
 }
