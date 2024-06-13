@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[DefaultExecutionOrder(-1)]
 public class AGameManager : Singleton<AGameManager>
 {
     [SerializeField] private ACardsGrid CardsGrid;
@@ -9,7 +11,9 @@ public class AGameManager : Singleton<AGameManager>
     private Queue<CardsCouple> _cardsCouples;
 
     private CardsCouple CurrentCouple;
-    
+
+    public Action MatchingSuccess;
+    public Action MatchingFailed;
 
     public struct CardsCouple
     {
@@ -55,6 +59,7 @@ public class AGameManager : Singleton<AGameManager>
 
     IEnumerator FlipCardsCouple(CardsCouple cardCouple)
     {
+        MatchingFailed?.Invoke();
         yield return new WaitForSecondsRealtime(1);
         cardCouple.CardSlotA.Card.Flip();
         cardCouple.CardSlotB.Card.Flip();
@@ -64,6 +69,7 @@ public class AGameManager : Singleton<AGameManager>
 
     IEnumerator DestroyCards(CardsCouple cardsCouple)
     {
+        MatchingSuccess?.Invoke();
         yield return new WaitForSecondsRealtime(1);
         cardsCouple.CardSlotA.ClearSlot();
         cardsCouple.CardSlotB.ClearSlot();
