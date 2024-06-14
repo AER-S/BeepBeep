@@ -32,6 +32,6 @@ public class AScoreDisplay : MonoBehaviour
 
     private void Update()
     {
-        TimerValueDisplay.text = AGameManager.Instance.LevelTime.ToString("00:00");
+        TimerValueDisplay.text = AGameManager.Instance.RemainingTime.ToString("00:00");
     }
 }

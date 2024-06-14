@@ -5,7 +5,6 @@ using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-
 public class ACardsGrid : MonoBehaviour
 {
     [SerializeField] private int Width;
@@ -23,7 +22,7 @@ public class ACardsGrid : MonoBehaviour
     private ACardSlot[] _cardSlots;
     private Vector3 _scale;
     
-    void OnEnable()
+    public void Populate()
     {
         _scale = GetScale();
         var cardsCount = Rows * Columns;

@@ -2,13 +2,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [DefaultExecutionOrder(-2)]
 public class AGameManager : Singleton<AGameManager>
 {
     [SerializeField] private ACardsGrid CardsGrid;
     [SerializeField] private float CardsShowingTime;
-    [field:SerializeField] public float LevelTime { get; private set; }
+    [SerializeField] private float LevelTime;
+    
+    public float RemainingTime
+    {
+        get => _levelTime;
+    }
 
     private Queue<CardsCouple> _cardsCouples;
 
@@ -18,7 +24,9 @@ public class AGameManager : Singleton<AGameManager>
     public Action MatchingFailed;
     public Action<bool> GameOver;
 
-    private int _unmatchedCards;
+    [SerializeField]private int _unmatchedCards;
+    private bool _gameOver;
+    private float _levelTime;
 
     public struct CardsCouple
     {
@@ -44,19 +52,24 @@ public class AGameManager : Singleton<AGameManager>
     }
     
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
+        if(SceneManager.GetActiveScene().buildIndex != 0) return;
+        CardsGrid.Populate();
         CurrentCouple.CardSlotA = null;
         CurrentCouple.CardSlotB = null;
         _cardsCouples = new Queue<CardsCouple>();
         _unmatchedCards = CardsGrid.Columns * CardsGrid.Rows;
+        _gameOver = false;
+        _levelTime = LevelTime;
+        Debug.Log("Game Start...");
         StartCoroutine(ShowHideCards());
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        if(SceneManager.GetActiveScene().buildIndex!=0) return;
         if (_cardsCouples.Count > 0)
         {
             var cardsCouple = _cardsCouples.Dequeue();
@@ -69,8 +82,12 @@ public class AGameManager : Singleton<AGameManager>
             return;
         }
         
-        LevelTime = Mathf.Max(LevelTime-Time.deltaTime,0);
-        if(LevelTime<=0 && _unmatchedCards>0) GameOver?.Invoke(false);
+        _levelTime = Mathf.Max(_levelTime-Time.deltaTime,0);
+        if (_levelTime <= 0 && _unmatchedCards > 0 && !_gameOver)
+        {
+            GameOver?.Invoke(false);
+            _gameOver = true;
+        }
         
         
         
@@ -83,8 +100,7 @@ public class AGameManager : Singleton<AGameManager>
         yield return new WaitForSecondsRealtime(1);
         cardCouple.CardSlotA.Card.Flip();
         cardCouple.CardSlotB.Card.Flip();
-        yield return new WaitForSecondsRealtime(1);
-        
+
     }
 
     IEnumerator DestroyCards(CardsCouple cardsCouple)
@@ -93,7 +109,6 @@ public class AGameManager : Singleton<AGameManager>
         yield return new WaitForSecondsRealtime(1);
         cardsCouple.CardSlotA.ClearSlot();
         cardsCouple.CardSlotB.ClearSlot();
-        yield return new WaitForSecondsRealtime(1);
     }
 
     private void ProcessResult(CardsCouple cardsCouple)
@@ -109,6 +124,7 @@ public class AGameManager : Singleton<AGameManager>
 
     IEnumerator ShowHideCards()
     {
+        yield return new WaitForSecondsRealtime(0.5f);
         CardsGrid.FlipAllCards();
         yield return new WaitForSecondsRealtime(CardsShowingTime);
         CardsGrid.FlipAllCards();
