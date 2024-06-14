@@ -41,16 +41,8 @@ public class ASoundsManager : Singleton<ASoundsManager>
         MatchingAudioSource.PlayOneShot(MatchingSuccessSound);
     }
 
-
-    // Start is called before the first frame update
-    void Start()
+    public void PlayFlippingSound()
     {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        CardAudioSource.PlayOneShot(FlippingSound);
     }
 }
