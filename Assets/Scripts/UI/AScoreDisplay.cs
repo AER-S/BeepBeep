@@ -30,6 +30,11 @@ public class AScoreDisplay : MonoBehaviour
         CombosValueDisplay.text = AScoringSystem.Instance.ComboCounter.ToString("0000");
     }
 
+    private void Start()
+    {
+        UpdateDisplay();
+    }
+
     private void Update()
     {
         TimerValueDisplay.text = AGameManager.Instance.RemainingTime.ToString("00:00");

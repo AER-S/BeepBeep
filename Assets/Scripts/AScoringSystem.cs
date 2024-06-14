@@ -26,6 +26,7 @@ public class AScoringSystem : Singleton<AScoringSystem>
 
     private void OnEnable()
     {
+        LoadData();
         AGameManager.Instance.MatchingSuccess += ProcessMatchingSuccess;
         AGameManager.Instance.MatchingFailed += ProcessMatchingFail;
     }
@@ -51,6 +52,17 @@ public class AScoringSystem : Singleton<AScoringSystem>
         TurnsCounter++;
         ComboCounter = 0;
         ScoreUpdated?.Invoke();
+    }
+    
+    private void LoadData()
+    {
+        if (ASavingManager.Instance.GameData == null) return;
+        if (ASavingManager.Instance.GameData.IsLastGameAWin)
+        {
+            TurnsCounter = ASavingManager.Instance.GameData.TotalTurns;
+            Score = ASavingManager.Instance.GameData.TotalScore;
+            ComboCounter = ASavingManager.Instance.GameData.Combos;
+        }
     }
     
 }

@@ -15,6 +15,9 @@ public class AGameManager : Singleton<AGameManager>
     {
         get => _levelTime;
     }
+    
+    public bool IsGameOver { get; private set; }
+    public bool IsWin { get; private set; }
 
     private Queue<CardsCouple> _cardsCouples;
 
@@ -25,7 +28,6 @@ public class AGameManager : Singleton<AGameManager>
     public Action<bool> GameOver;
 
     [SerializeField]private int _unmatchedCards;
-    private bool _gameOver;
     private float _levelTime;
 
     public struct CardsCouple
@@ -60,7 +62,8 @@ public class AGameManager : Singleton<AGameManager>
         CurrentCouple.CardSlotB = null;
         _cardsCouples = new Queue<CardsCouple>();
         _unmatchedCards = CardsGrid.Columns * CardsGrid.Rows;
-        _gameOver = false;
+        IsGameOver = false;
+        IsWin = false;
         _levelTime = LevelTime;
         Debug.Log("Game Start...");
         StartCoroutine(ShowHideCards());
@@ -79,14 +82,17 @@ public class AGameManager : Singleton<AGameManager>
         if (_unmatchedCards <= 0)
         {
             GameOver?.Invoke(true);
+            IsGameOver = true;
+            IsWin = true;
             return;
         }
         
         _levelTime = Mathf.Max(_levelTime-Time.deltaTime,0);
-        if (_levelTime <= 0 && _unmatchedCards > 0 && !_gameOver)
+        if (_levelTime <= 0 && _unmatchedCards > 0 && !IsGameOver)
         {
             GameOver?.Invoke(false);
-            _gameOver = true;
+            IsGameOver = true;
+            IsWin = false;
         }
         
         

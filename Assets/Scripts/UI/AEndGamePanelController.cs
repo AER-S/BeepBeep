@@ -21,6 +21,7 @@ public class AEndGamePanelController : MonoBehaviour
         AGameManager.Instance.GameOver += ProcessEndGame;
         QuitButton.onClick.AddListener(QuitGame);
         RestartButton.onClick.AddListener(Restart);
+        ContinueButton.onClick.AddListener(Restart);
     }
 
 
@@ -29,6 +30,7 @@ public class AEndGamePanelController : MonoBehaviour
         AGameManager.Instance.GameOver -= ProcessEndGame;
         QuitButton.onClick.RemoveListener(QuitGame);
         RestartButton.onClick.RemoveListener(Restart);
+        ContinueButton.onClick.RemoveListener(Restart);
     }
     private void ProcessEndGame(bool gameWon)
     {
@@ -41,6 +43,7 @@ public class AEndGamePanelController : MonoBehaviour
     {
         Title.text = "GAME WON !!!";
         Title.color = Color.green;
+        RestartButton.gameObject.SetActive(false);
     }
 
     private void OnGameLost()
