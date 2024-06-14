@@ -2,6 +2,7 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+[DefaultExecutionOrder(-3)]
 public class ASavingManager : Singleton<ASavingManager>
 {
     private string _saveFilePath;
@@ -25,15 +26,10 @@ public class ASavingManager : Singleton<ASavingManager>
     {
         SceneManager.sceneUnloaded += SaveData;
         SceneManager.sceneLoaded += LoadData;
+        LoadData();
     }
 
-    private void OnDisable()
-    {
-        SceneManager.sceneUnloaded -= SaveData;
-        SceneManager.sceneLoaded -= LoadData;
-    }
-
-    private void LoadData(Scene scene, LoadSceneMode loadMode)
+    private void LoadData()
     {
         if (File.Exists(_saveFilePath))
         {
@@ -43,7 +39,14 @@ public class ASavingManager : Singleton<ASavingManager>
         }
     }
 
-    private void SaveData(Scene scene)
+    private void OnDisable()
+    {
+        SceneManager.sceneUnloaded -= SaveData;
+        SceneManager.sceneLoaded -= LoadData;
+        SaveData();
+    }
+
+    private void SaveData()
     {
         if(!AGameManager.Instance) return;
         if(!AScoringSystem.Instance) return;
@@ -60,6 +63,16 @@ public class ASavingManager : Singleton<ASavingManager>
         File.WriteAllText(_saveFilePath, json);
         
         Debug.Log("Saving Data...");
+    }
+
+    private void LoadData(Scene scene, LoadSceneMode loadMode)
+    {
+        LoadData();
+    }
+
+    private void SaveData(Scene scene)
+    {
+        SaveData();
     }
     
 }
