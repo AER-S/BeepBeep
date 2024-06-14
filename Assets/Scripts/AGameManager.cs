@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[DefaultExecutionOrder(-1)]
+[DefaultExecutionOrder(-2)]
 public class AGameManager : Singleton<AGameManager>
 {
     [SerializeField] private ACardsGrid CardsGrid;

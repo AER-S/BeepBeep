@@ -1,23 +1,27 @@
 using System;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.Serialization;
 
+[DefaultExecutionOrder(-1)]
 public class AScoringSystem : Singleton<AScoringSystem>
 {
     [SerializeField] private int ComboFactor;
     
-    [SerializeField] private int _turnsCounter;
+    public int TurnsCounter { get; private set; }
 
-    [SerializeField] private int _score;
+    public int Score { get; private set; }
 
-    [SerializeField] private int _comboCounter;
-    
-    private void Awake()
+    public int ComboCounter { get; private set; }
+
+    public Action ScoreUpdated;
+
+    new void Awake()
     {
         base.Awake();
-        _turnsCounter = 0;
-        _score = 0;
-        _comboCounter = 0;
+        TurnsCounter = 0;
+        Score = 0;
+        ComboCounter = 0;
     }
 
     private void OnEnable()
@@ -36,15 +40,17 @@ public class AScoringSystem : Singleton<AScoringSystem>
 
     private void ProcessMatchingSuccess()
     {
-        _turnsCounter++;
-        _comboCounter++;
-        _score += _comboCounter * ComboFactor;
+        TurnsCounter++;
+        ComboCounter++;
+        Score += ComboCounter * ComboFactor;
+        ScoreUpdated?.Invoke();
     }
     
     private void ProcessMatchingFail()
     {
-        _turnsCounter++;
-        _comboCounter = 0;
+        TurnsCounter++;
+        ComboCounter = 0;
+        ScoreUpdated?.Invoke();
     }
     
 }
