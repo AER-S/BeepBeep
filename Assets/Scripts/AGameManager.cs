@@ -8,6 +8,7 @@ public class AGameManager : Singleton<AGameManager>
 {
     [SerializeField] private ACardsGrid CardsGrid;
     [SerializeField] private float CardsShowingTime;
+    [field:SerializeField] public float LevelTime { get; private set; }
 
     private Queue<CardsCouple> _cardsCouples;
 
@@ -15,6 +16,9 @@ public class AGameManager : Singleton<AGameManager>
 
     public Action MatchingSuccess;
     public Action MatchingFailed;
+    public Action<bool> GameOver;
+
+    private int _unmatchedCards;
 
     public struct CardsCouple
     {
@@ -45,17 +49,31 @@ public class AGameManager : Singleton<AGameManager>
         CurrentCouple.CardSlotA = null;
         CurrentCouple.CardSlotB = null;
         _cardsCouples = new Queue<CardsCouple>();
+        _unmatchedCards = CardsGrid.Columns * CardsGrid.Rows;
         StartCoroutine(ShowHideCards());
     }
 
     // Update is called once per frame
     void Update()
     {
+        
         if (_cardsCouples.Count > 0)
         {
             var cardsCouple = _cardsCouples.Dequeue();
             ProcessResult(cardsCouple);
         }
+
+        if (_unmatchedCards <= 0)
+        {
+            GameOver?.Invoke(true);
+            return;
+        }
+        
+        LevelTime = Mathf.Max(LevelTime-Time.deltaTime,0);
+        if(LevelTime<=0 && _unmatchedCards>0) GameOver?.Invoke(false);
+        
+        
+        
         
     }
 
@@ -80,6 +98,7 @@ public class AGameManager : Singleton<AGameManager>
 
     private void ProcessResult(CardsCouple cardsCouple)
     {
+        if (CheckMatchingCards(cardsCouple)) _unmatchedCards -= 2;
         StartCoroutine(CheckMatchingCards(cardsCouple) ? "DestroyCards" : "FlipCardsCouple", cardsCouple);
     }
 

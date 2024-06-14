@@ -10,6 +10,7 @@ public class AScoreDisplay : MonoBehaviour
     [SerializeField] private TMP_Text TurnsValueDisplay;
     [SerializeField] private TMP_Text ScoreValueDisplay;
     [SerializeField] private TMP_Text CombosValueDisplay;
+    [SerializeField] private TMP_Text TimerValueDisplay;
 
     
     private void OnEnable()
@@ -28,5 +29,9 @@ public class AScoreDisplay : MonoBehaviour
         ScoreValueDisplay.text = AScoringSystem.Instance.Score.ToString("0000");
         CombosValueDisplay.text = AScoringSystem.Instance.ComboCounter.ToString("0000");
     }
-    
+
+    private void Update()
+    {
+        TimerValueDisplay.text = AGameManager.Instance.LevelTime.ToString("00:00");
+    }
 }
