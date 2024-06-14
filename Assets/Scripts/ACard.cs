@@ -36,7 +36,7 @@ public class ACard : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Isflipped = true;
+        Isflipped = false;
         FrontTexture = VisualProvider.GetTexture(Value);
         Front.material.mainTexture = FrontTexture;
     }

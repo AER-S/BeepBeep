@@ -7,6 +7,7 @@ using UnityEngine;
 public class AGameManager : Singleton<AGameManager>
 {
     [SerializeField] private ACardsGrid CardsGrid;
+    [SerializeField] private float CardsShowingTime;
 
     private Queue<CardsCouple> _cardsCouples;
 
@@ -44,6 +45,7 @@ public class AGameManager : Singleton<AGameManager>
         CurrentCouple.CardSlotA = null;
         CurrentCouple.CardSlotB = null;
         _cardsCouples = new Queue<CardsCouple>();
+        StartCoroutine(ShowHideCards());
     }
 
     // Update is called once per frame
@@ -84,6 +86,13 @@ public class AGameManager : Singleton<AGameManager>
     private bool CheckMatchingCards(CardsCouple cardsCouple)
     {
         return (cardsCouple.CardSlotA.Card.Value == cardsCouple.CardSlotB.Card.Value);
+    }
+
+    IEnumerator ShowHideCards()
+    {
+        CardsGrid.FlipAllCards();
+        yield return new WaitForSecondsRealtime(CardsShowingTime);
+        CardsGrid.FlipAllCards();
     }
 
 }

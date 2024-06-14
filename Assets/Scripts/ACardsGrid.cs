@@ -18,11 +18,12 @@ public class ACardsGrid : MonoBehaviour
     [SerializeField]private VisualProvider VisualProvider;
 
     [SerializeField] private int Variations;
-    
+
+
     private ACardSlot[] _cardSlots;
     private Vector3 _scale;
     
-    void Start()
+    void OnEnable()
     {
         _scale = GetScale();
         var cardsCount = Rows * Columns;
@@ -106,5 +107,13 @@ public class ACardsGrid : MonoBehaviour
         float WidthScale = (Width) / ((float)Columns * 3);
         float HeightScale = (Height) / ((float)Rows * 5);
         return new Vector3(WidthScale*0.9f, HeightScale*0.9f, 1);
+    }
+
+    public void FlipAllCards()
+    {
+        foreach (var cardSlot in _cardSlots)
+        {
+            cardSlot.Card.Flip();
+        }
     }
 }
