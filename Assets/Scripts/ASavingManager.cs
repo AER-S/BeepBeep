@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -6,12 +8,16 @@ using UnityEngine.SceneManagement;
 public class ASavingManager : Singleton<ASavingManager>
 {
     private string _saveFilePath;
+    
+    [System.Serializable]
     public class AGameData
     {
+        public bool IsLastGameOver;
         public bool IsLastGameAWin;
         public int TotalScore;
         public int TotalTurns;
         public int Combos;
+        public List<ACardSlot.ACardSlotData> RemainingCards;
     }
     
     public AGameData GameData { get; private set; }
@@ -52,7 +58,9 @@ public class ASavingManager : Singleton<ASavingManager>
         if(!AScoringSystem.Instance) return;
         GameData = new AGameData
         {
+            IsLastGameOver = AGameManager.Instance.IsGameOver,
             IsLastGameAWin = AGameManager.Instance.IsWin,
+            RemainingCards = AGameManager.Instance.CardGrid.GetRemainingCards(),
             TotalScore = AScoringSystem.Instance.Score,
             TotalTurns = AScoringSystem.Instance.TurnsCounter,
             Combos = AScoringSystem.Instance.ComboCounter
@@ -63,6 +71,7 @@ public class ASavingManager : Singleton<ASavingManager>
         File.WriteAllText(_saveFilePath, json);
         
         Debug.Log("Saving Data...");
+        Debug.Log(Application.persistentDataPath);
     }
 
     private void LoadData(Scene scene, LoadSceneMode loadMode)
@@ -74,5 +83,9 @@ public class ASavingManager : Singleton<ASavingManager>
     {
         SaveData();
     }
-    
+
+    private void OnApplicationQuit()
+    {
+        SaveData();
+    }
 }

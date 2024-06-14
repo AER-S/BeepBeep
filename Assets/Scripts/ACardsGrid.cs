@@ -21,12 +21,31 @@ public class ACardsGrid : MonoBehaviour
 
     private ACardSlot[] _cardSlots;
     private Vector3 _scale;
-    
+
+    private List<ACardSlot.ACardSlotData> _savedSlots;
+
+    private void OnEnable()
+    {
+        if(ASavingManager.Instance.GameData == null) return;
+        if (!ASavingManager.Instance.GameData.IsLastGameOver)
+        {
+            _savedSlots = ASavingManager.Instance.GameData.RemainingCards;
+        }
+    }
+
     public void Populate()
     {
         _scale = GetScale();
         var cardsCount = Rows * Columns;
         _cardSlots = new ACardSlot[cardsCount];
+        if (_savedSlots is { Count: > 0 })
+        {
+            foreach (var savedSlot in _savedSlots)
+            {
+                SpawnACard(savedSlot.Index,savedSlot.CardValue);
+            }
+            return;
+        }
         var baseWeight = GetWeight();
         var weightsDistribution = GetDistribution(baseWeight);
         for (int i = 0; i < _cardSlots.Length; i++)
@@ -112,7 +131,25 @@ public class ACardsGrid : MonoBehaviour
     {
         foreach (var cardSlot in _cardSlots)
         {
-            cardSlot.Card.Flip();
+            if(cardSlot != null)cardSlot.Card.Flip();
         }
+    }
+
+    public List<ACardSlot.ACardSlotData> GetRemainingCards()
+    {
+        var remainingCards = new List<ACardSlot.ACardSlotData>();
+        for (int i = 0; i < _cardSlots.Length; i++)
+        {
+            if(_cardSlots[i] ==null || _cardSlots[i].IsEmpty) continue;
+            Debug.Log("SavingSlot...");
+            var cardData = new ACardSlot.ACardSlotData()
+            {
+                CardValue = _cardSlots[i].Card.Value,
+                Index = i
+            };
+            remainingCards.Add(cardData);
+        }
+
+        return remainingCards;
     }
 }

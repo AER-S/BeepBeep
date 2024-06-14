@@ -6,6 +6,12 @@ using UnityEngine;
 
 public class ACardSlot : MonoBehaviour
 {
+    [System.Serializable]
+    public class ACardSlotData
+    {
+        public int CardValue;
+        public int Index;
+    }
     public ACard Card
     { get; private set; }
 

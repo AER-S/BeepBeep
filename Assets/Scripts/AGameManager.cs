@@ -10,7 +10,7 @@ public class AGameManager : Singleton<AGameManager>
     [SerializeField] private ACardsGrid CardsGrid;
     [SerializeField] private float CardsShowingTime;
     [SerializeField] private float LevelTime;
-    
+
     public float RemainingTime
     {
         get => _levelTime;
@@ -18,6 +18,8 @@ public class AGameManager : Singleton<AGameManager>
     
     public bool IsGameOver { get; private set; }
     public bool IsWin { get; private set; }
+
+    public ACardsGrid CardGrid => CardsGrid;
 
     private Queue<CardsCouple> _cardsCouples;
 
@@ -29,6 +31,7 @@ public class AGameManager : Singleton<AGameManager>
 
     [SerializeField]private int _unmatchedCards;
     private float _levelTime;
+    
 
     public struct CardsCouple
     {
@@ -52,7 +55,9 @@ public class AGameManager : Singleton<AGameManager>
             CurrentCouple.CardSlotB = null;
         }
     }
+
     
+
     // Start is called before the first frame update
     private void Start()
     {
@@ -135,5 +140,6 @@ public class AGameManager : Singleton<AGameManager>
         yield return new WaitForSecondsRealtime(CardsShowingTime);
         CardsGrid.FlipAllCards();
     }
+    
 
 }
