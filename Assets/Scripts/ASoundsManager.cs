@@ -1,6 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
+
 using UnityEditor.Callbacks;
 using UnityEngine;
 
@@ -17,8 +15,7 @@ public class ASoundsManager : Singleton<ASoundsManager>
     [SerializeField] private AudioSource CardAudioSource;
 
     [SerializeField] private AudioSource MatchingAudioSource;
-
-    [RunAfterClass(typeof(AGameManager))]
+    
     private void OnEnable()
     {
         AGameManager.Instance.MatchingSuccess += PlaySuccessSound;

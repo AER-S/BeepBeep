@@ -1,7 +1,7 @@
+
 using System;
-using Unity.Collections;
 using UnityEngine;
-using UnityEngine.Serialization;
+
 
 [DefaultExecutionOrder(-1)]
 public class AScoringSystem : Singleton<AScoringSystem>
