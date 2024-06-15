@@ -21,8 +21,10 @@ public class AEndGamePanelController : MonoBehaviour
         AGameManager.Instance.GameOver += ProcessEndGame;
         QuitButton.onClick.AddListener(QuitGame);
         RestartButton.onClick.AddListener(Restart);
-        ContinueButton.onClick.AddListener(Restart);
+        ContinueButton.onClick.AddListener(Continue);
+        HomeButton.onClick.AddListener(GoHome);
     }
+
 
 
     private void OnDisable()
@@ -30,7 +32,12 @@ public class AEndGamePanelController : MonoBehaviour
         AGameManager.Instance.GameOver -= ProcessEndGame;
         QuitButton.onClick.RemoveListener(QuitGame);
         RestartButton.onClick.RemoveListener(Restart);
-        ContinueButton.onClick.RemoveListener(Restart);
+        ContinueButton.onClick.RemoveListener(Continue);
+        HomeButton.onClick.AddListener(GoHome);
+    }
+    private void GoHome()
+    {
+        SceneManager.LoadScene(0);
     }
     private void ProcessEndGame(bool gameWon)
     {
@@ -43,7 +50,6 @@ public class AEndGamePanelController : MonoBehaviour
     {
         Title.text = "GAME WON !!!";
         Title.color = Color.green;
-        RestartButton.gameObject.SetActive(false);
     }
 
     private void OnGameLost()
@@ -60,8 +66,16 @@ public class AEndGamePanelController : MonoBehaviour
 
     private void Restart()
     {
-        var level = SceneManager.GetActiveScene().buildIndex;
-        SceneManager.LoadScene(level);
+        ASavingManager.Instance.GameData.GameMode = AMainMenuController.AGameMode.NewGame;
+        ASavingManager.Instance.GameData.IsLastGameAWin = false;
+        SceneManager.LoadScene(1);
+    }
+
+    private void Continue()
+    {
+        ASavingManager.Instance.GameData.GameMode = AMainMenuController.AGameMode.NewGame;
+        ASavingManager.Instance.GameData.IsLastGameAWin = true;
+        SceneManager.LoadScene(1);
     }
 
     // Start is called before the first frame update

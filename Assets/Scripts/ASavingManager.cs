@@ -34,12 +34,9 @@ public class ASavingManager : Singleton<ASavingManager>
     private void OnEnable()
     {
         _saveFilePath = Application.persistentDataPath + "/GameData.json";
-        SceneManager.sceneUnloaded += SaveData;
-        SceneManager.sceneLoaded += LoadData;
-        LoadData();
     }
 
-    private void LoadData()
+    public void LoadData()
     {
         if (File.Exists(_saveFilePath))
         {
@@ -47,20 +44,22 @@ public class ASavingManager : Singleton<ASavingManager>
             GameData = JsonUtility.FromJson<AGameData>(json);
             Debug.Log("Loading Data...");
         }
+
+        GameData ??= new AGameData
+        {
+            IsLastGameOver = true,
+            IsLastGameAWin = true,
+            CardsGridData = new ACardsGrid.ACardsGridData()
+        };
     }
 
     private void OnDisable()
     {
-        SceneManager.sceneUnloaded -= SaveData;
-        SceneManager.sceneLoaded -= LoadData;
         if(this == Instance)SaveData();
     }
 
-    private void SaveData()
+    public void SaveData()
     {
-        if (GameData == null) GameData = new AGameData();
-
-
         if (AGameManager.Instance)
         {
             GameData.IsLastGameOver = AGameManager.Instance.IsGameOver;
@@ -68,6 +67,7 @@ public class ASavingManager : Singleton<ASavingManager>
             GameData.RemainingCards = AGameManager.Instance.CardGrid.GetRemainingCards();
             GameData.CardsGridData = AGameManager.Instance.CardGrid.CardsGridData;
             GameData.RemainingTime = AGameManager.Instance.RemainingTime;
+            Debug.Log("Saving Game Manager....");
         }
 
         if (AScoringSystem.Instance)
@@ -75,6 +75,7 @@ public class ASavingManager : Singleton<ASavingManager>
             GameData.TotalScore = AScoringSystem.Instance.Score;
             GameData.TotalTurns = AScoringSystem.Instance.TurnsCounter;
             GameData.Combos = AScoringSystem.Instance.ComboCounter;
+            Debug.Log("SavingScore");
         }
         
         string json = JsonUtility.ToJson(GameData);
@@ -83,16 +84,6 @@ public class ASavingManager : Singleton<ASavingManager>
         
         Debug.Log("Saving Data...");
         Debug.Log(Application.persistentDataPath);
-    }
-
-    private void LoadData(Scene scene, LoadSceneMode loadMode)
-    {
-        LoadData();
-    }
-
-    private void SaveData(Scene scene)
-    {
-        SaveData();
     }
 
     private void OnApplicationQuit()

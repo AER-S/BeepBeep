@@ -7,21 +7,23 @@ using UnityEngine.Serialization;
 public class AScoringSystem : Singleton<AScoringSystem>
 {
     [SerializeField] private int ComboFactor;
-    
-    public int TurnsCounter { get; private set; }
 
-    public int Score { get; private set; }
-
-    public int ComboCounter { get; private set; }
+    public int TurnsCounter => _turnsCounter;
+    public int Score => _score;
+    public int ComboCounter => _combosCounter;
 
     public Action ScoreUpdated;
+
+    private int _turnsCounter;
+    private int _score;
+    private int _combosCounter;
 
     new void Awake()
     {
         base.Awake();
-        TurnsCounter = 0;
-        Score = 0;
-        ComboCounter = 0;
+        _turnsCounter = 0;
+        _score = 0;
+        _combosCounter = 0;
     }
 
     private void OnEnable()
@@ -41,27 +43,26 @@ public class AScoringSystem : Singleton<AScoringSystem>
 
     private void ProcessMatchingSuccess()
     {
-        TurnsCounter++;
-        ComboCounter++;
-        Score += ComboCounter * ComboFactor;
+        _turnsCounter++;
+        _combosCounter++;
+        _score += _combosCounter * ComboFactor;
         ScoreUpdated?.Invoke();
     }
     
     private void ProcessMatchingFail()
     {
-        TurnsCounter++;
-        ComboCounter = 0;
+        _turnsCounter++;
+        _combosCounter = 0;
         ScoreUpdated?.Invoke();
     }
     
     private void LoadData()
     {
-        if (ASavingManager.Instance.GameData == null) return;
         if (ASavingManager.Instance.GameData.IsLastGameAWin || ASavingManager.Instance.GameData.GameMode == AMainMenuController.AGameMode.Continue)
         {
-            TurnsCounter = ASavingManager.Instance.GameData.TotalTurns;
-            Score = ASavingManager.Instance.GameData.TotalScore;
-            ComboCounter = ASavingManager.Instance.GameData.Combos;
+            _turnsCounter = ASavingManager.Instance.GameData.TotalTurns;
+            _score = ASavingManager.Instance.GameData.TotalScore;
+            _combosCounter = ASavingManager.Instance.GameData.Combos;
         }
     }
     

@@ -24,7 +24,7 @@ public class AMainMenuController : Singleton<AMainMenuController>
     
     private void OnEnable()
     {
-        ShowHideContinueButton();
+        ASavingManager.Instance.LoadData();
         NewGameButton.onClick.AddListener(NewGame);
         OptionsButton.onClick.AddListener(OpenOptionsMenu);
         QuitButton.onClick.AddListener(Application.Quit);
@@ -36,6 +36,12 @@ public class AMainMenuController : Singleton<AMainMenuController>
         NewGameButton.onClick.RemoveListener(NewGame);
         OptionsButton.onClick.RemoveListener(OpenOptionsMenu);
         QuitButton.onClick.RemoveListener(Application.Quit);
+        ASavingManager.Instance.SaveData();
+    }
+
+    private void Start()
+    {
+        ShowHideContinueButton();
     }
 
     private void OpenOptionsMenu()

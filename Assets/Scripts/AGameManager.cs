@@ -55,7 +55,15 @@ public class AGameManager : Singleton<AGameManager>
         }
     }
 
-    
+    private void OnEnable()
+    {
+        ASavingManager.Instance.LoadData();
+    }
+
+    private void OnDisable()
+    {
+        ASavingManager.Instance.SaveData();
+    }
 
     // Start is called before the first frame update
     private void Start()
