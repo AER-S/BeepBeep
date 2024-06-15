@@ -18,6 +18,7 @@ public class ASavingManager : Singleton<ASavingManager>
         public int TotalTurns;
         public int Combos;
         public List<ACardSlot.ACardSlotData> RemainingCards;
+        public ACardsGrid.ACardsGridData CardsGridData;
     }
     
     public AGameData GameData { get; private set; }
@@ -61,6 +62,7 @@ public class ASavingManager : Singleton<ASavingManager>
             IsLastGameOver = AGameManager.Instance.IsGameOver,
             IsLastGameAWin = AGameManager.Instance.IsWin,
             RemainingCards = AGameManager.Instance.CardGrid.GetRemainingCards(),
+            CardsGridData = AGameManager.Instance.CardGrid.CardsGridData,
             TotalScore = AScoringSystem.Instance.Score,
             TotalTurns = AScoringSystem.Instance.TurnsCounter,
             Combos = AScoringSystem.Instance.ComboCounter

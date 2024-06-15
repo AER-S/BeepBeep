@@ -7,36 +7,63 @@ using Random = UnityEngine.Random;
 
 public class ACardsGrid : MonoBehaviour
 {
-    [SerializeField] private int Width;
-    [SerializeField] private int Height;
+    [Serializable]
+    public class ACardsGridData
+    {
+        public int Width;
+        public int Height;
+        public int Rows;
+        public int Columns;
+        public int Variations;
+    }
+
+    [SerializeField] private ACardsGridData GridData;
     [SerializeField] private ACard CardPrefab;
     [SerializeField] private ACardSlot CardSlotPrefab;
-    [field:SerializeField]public int Rows { get; private set; }
-    [field:SerializeField]public int Columns { get; private set; }
 
     [SerializeField]private VisualProvider VisualProvider;
 
-    [SerializeField] private int Variations;
+    public ACardsGridData CardsGridData => GridData;
+    public int UnmatchedCards => _unmatchedCards;
+    
 
 
     private ACardSlot[] _cardSlots;
     private Vector3 _scale;
+    private int _unmatchedCards;
+
 
     private List<ACardSlot.ACardSlotData> _savedSlots;
+    
+    
 
     private void OnEnable()
     {
+        AGameManager.Instance.MatchingSuccess += OnMatchingSuccess;
         if(ASavingManager.Instance.GameData == null) return;
         if (!ASavingManager.Instance.GameData.IsLastGameOver)
         {
             _savedSlots = ASavingManager.Instance.GameData.RemainingCards;
         }
+
+        if(ASavingManager.Instance.GameData.CardsGridData!=null && ASavingManager.Instance.GameData.CardsGridData.Rows!=0) GridData = ASavingManager.Instance.GameData.CardsGridData;
+    }
+
+    private void OnDisable()
+    {
+        AGameManager.Instance.MatchingSuccess += OnMatchingSuccess;
+    }
+
+    private void OnMatchingSuccess()
+    {
+        _unmatchedCards -= 2;
     }
 
     public void Populate()
     {
+        _unmatchedCards = 0;
         _scale = GetScale();
-        var cardsCount = Rows * Columns;
+        var cardsCount = GridData.Rows * GridData.Columns;
         _cardSlots = new ACardSlot[cardsCount];
         if (_savedSlots is { Count: > 0 })
         {
@@ -44,6 +71,7 @@ public class ACardsGrid : MonoBehaviour
             {
                 SpawnACard(savedSlot.Index,savedSlot.CardValue);
             }
+            
             return;
         }
         var baseWeight = GetWeight();
@@ -53,19 +81,20 @@ public class ACardsGrid : MonoBehaviour
             var cardValue = GetCardValueFrom(weightsDistribution);
             SpawnACard(i,cardValue);
         }
+        
     }
 
     private int GetWeight()
     {
-        return (Rows * Columns) / Variations;
+        return (GridData.Rows * GridData.Columns) / GridData.Variations;
     }
 
     private Dictionary<int, int> GetDistribution(int baseWeight)
     {
-        var upperWeightCount = (Rows * Columns) % Variations;
+        var upperWeightCount = (GridData.Rows * GridData.Columns) % GridData.Variations;
         //Debug.Log("UpperWeightCount= "+upperWeightCount);
         Dictionary<int, int> Distributions = new Dictionary<int, int>();
-        for (int i = 0; i < Variations; i++)
+        for (int i = 0; i < GridData.Variations; i++)
         {
             int value = GetRandomValue(Distributions);
             int weight = (i < upperWeightCount) ? (baseWeight + 1) : baseWeight;
@@ -107,23 +136,24 @@ public class ACardsGrid : MonoBehaviour
         _cardSlots[position].Card.transform.SetParent(_cardSlots[position].transform);
         _cardSlots[position].Card.Value = cardValue;
         _cardSlots[position].transform.localScale = _scale;
+        _unmatchedCards++;
     }
 
     Vector3 GetPosition(int i)
     {
         
-        int rowIndex = i / Columns;
-        int columnIndex =  i % Columns;
-        float rowPosition = (Height / (float)Rows) * rowIndex;
-        float columnPosition = (Width /(float) Columns) * columnIndex;
+        int rowIndex = i / GridData.Columns;
+        int columnIndex =  i % GridData.Columns;
+        float rowPosition = (GridData.Height / (float)GridData.Rows) * rowIndex;
+        float columnPosition = (GridData.Width /(float) GridData.Columns) * columnIndex;
         var spawnLocation = new Vector3(columnPosition, rowPosition, 0);
         return spawnLocation;
     }
 
     Vector3 GetScale()
     {
-        float WidthScale = (Width) / ((float)Columns * 3);
-        float HeightScale = (Height) / ((float)Rows * 5);
+        float WidthScale = (GridData.Width) / ((float)GridData.Columns * 3);
+        float HeightScale = (GridData.Height) / ((float)GridData.Rows * 5);
         return new Vector3(WidthScale*0.9f, HeightScale*0.9f, 1);
     }
 

@@ -66,7 +66,6 @@ public class AGameManager : Singleton<AGameManager>
         CurrentCouple.CardSlotA = null;
         CurrentCouple.CardSlotB = null;
         _cardsCouples = new Queue<CardsCouple>();
-        _unmatchedCards = CardsGrid.Columns * CardsGrid.Rows;
         IsGameOver = false;
         IsWin = false;
         _levelTime = LevelTime;
@@ -84,7 +83,7 @@ public class AGameManager : Singleton<AGameManager>
             ProcessResult(cardsCouple);
         }
 
-        if (_unmatchedCards <= 0)
+        if (CardsGrid.UnmatchedCards <= 0)
         {
             GameOver?.Invoke(true);
             IsGameOver = true;
@@ -124,7 +123,6 @@ public class AGameManager : Singleton<AGameManager>
 
     private void ProcessResult(CardsCouple cardsCouple)
     {
-        if (CheckMatchingCards(cardsCouple)) _unmatchedCards -= 2;
         StartCoroutine(CheckMatchingCards(cardsCouple) ? "DestroyCards" : "FlipCardsCouple", cardsCouple);
     }
 
