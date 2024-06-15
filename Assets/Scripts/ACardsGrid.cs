@@ -53,6 +53,7 @@ public class ACardsGrid : MonoBehaviour
     private void OnMatchingSuccess()
     {
         _unmatchedCards -= 2;
+        Debug.Log("Unmatched Cards "+ _unmatchedCards);
     }
 
     public void Populate()
@@ -61,17 +62,37 @@ public class ACardsGrid : MonoBehaviour
         _scale = GetScale();
         var cardsCount = GridData.Rows * GridData.Columns;
         _cardSlots = new ACardSlot[cardsCount];
-        
+
         if (ASavingManager.Instance.GameData.GameMode == AMainMenuController.AGameMode.Continue)
         {
-            _savedSlots = ASavingManager.Instance.GameData.RemainingCards;
-            foreach (var savedSlot in _savedSlots)
-            {
-                SpawnACard(savedSlot.Index,savedSlot.CardValue);
-            }
-            
+            PopulateWithSavedGrid();
             return;
         }
+        
+        PopulateWithNewGrid();
+        
+    }
+
+    private void PopulateWithSavedGrid()
+    {
+        _savedSlots = ASavingManager.Instance.GameData.RemainingCards;
+        foreach (var savedSlot in _savedSlots)
+        {
+            SpawnACard(savedSlot.Index,savedSlot.CardValue);
+        }
+
+        for (int i = 0; i < _cardSlots.Length; i++)
+        {
+            if (!_cardSlots[i])
+            {
+                SpawnSlot(i);
+                _cardSlots[i].ClearSlot();
+            }
+        }
+    }
+
+    private void PopulateWithNewGrid()
+    {
         var baseWeight = GetWeight();
         var weightsDistribution = GetDistribution(baseWeight);
         for (int i = 0; i < _cardSlots.Length; i++)
@@ -79,7 +100,6 @@ public class ACardsGrid : MonoBehaviour
             var cardValue = GetCardValueFrom(weightsDistribution);
             SpawnACard(i,cardValue);
         }
-        
     }
 
     private int GetWeight()
@@ -126,10 +146,15 @@ public class ACardsGrid : MonoBehaviour
         return value;
     }
 
-    private void SpawnACard(int position, int cardValue)
+    private void SpawnSlot(int position)
     {
         var spawnPosition = GetPosition(position);
         _cardSlots[position] = Instantiate<ACardSlot>(CardSlotPrefab,spawnPosition,Quaternion.identity);
+    }
+
+    private void SpawnACard(int position, int cardValue)
+    {
+        var spawnPosition = GetPosition(position);
         _cardSlots[position].FillSlot(Instantiate<ACard>(CardPrefab, spawnPosition, Quaternion.identity));
         _cardSlots[position].Card.transform.SetParent(_cardSlots[position].transform);
         _cardSlots[position].Card.Value = cardValue;
@@ -159,7 +184,7 @@ public class ACardsGrid : MonoBehaviour
     {
         foreach (var cardSlot in _cardSlots)
         {
-            if(cardSlot != null)cardSlot.Card.Flip();
+            if(cardSlot.Card != null)cardSlot.Card.Flip();
         }
     }
 
@@ -168,7 +193,7 @@ public class ACardsGrid : MonoBehaviour
         var remainingCards = new List<ACardSlot.ACardSlotData>();
         for (int i = 0; i < _cardSlots.Length; i++)
         {
-            if(_cardSlots[i] ==null || _cardSlots[i].IsEmpty) continue;
+            if(_cardSlots[i].IsEmpty) continue;
             Debug.Log("SavingSlot...");
             var cardData = new ACardSlot.ACardSlotData()
             {
@@ -176,6 +201,7 @@ public class ACardsGrid : MonoBehaviour
                 Index = i
             };
             remainingCards.Add(cardData);
+            
         }
 
         return remainingCards;
