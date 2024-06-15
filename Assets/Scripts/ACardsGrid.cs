@@ -95,7 +95,7 @@ public class ACardsGrid : MonoBehaviour
         for (int i = 0; i < GridData.Variations; i++)
         {
             int value = GetRandomValue(Distributions);
-            int weight = (i < upperWeightCount) ? (baseWeight + 1) : baseWeight;
+            int weight = (i < upperWeightCount/2) ? (baseWeight + 2) : baseWeight;
             Distributions.Add(value,weight);
             //Debug.Log("value= "+value+ " weight: "+ weight);
         }
