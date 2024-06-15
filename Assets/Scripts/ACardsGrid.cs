@@ -1,32 +1,98 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-
+using Random = UnityEngine.Random;
 
 public class ACardsGrid : MonoBehaviour
 {
-    [SerializeField] private int Width;
-    [SerializeField] private int Height;
+    [Serializable]
+    public class ACardsGridData
+    {
+        public int Width;
+        public int Height;
+        public int Rows;
+        public int Columns;
+        public int Variations;
+    }
+
+    [SerializeField] private ACardsGridData GridData;
     [SerializeField] private ACard CardPrefab;
     [SerializeField] private ACardSlot CardSlotPrefab;
-    [field:SerializeField]public int Rows { get; private set; }
-    [field:SerializeField]public int Columns { get; private set; }
 
     [SerializeField]private VisualProvider VisualProvider;
 
-    [SerializeField] private int Variations;
+    public ACardsGridData CardsGridData => GridData;
+    public int UnmatchedCards => _unmatchedCards;
     
+
+
     private ACardSlot[] _cardSlots;
     private Vector3 _scale;
+    private int _unmatchedCards;
+
+
+    private List<ACardSlot.ACardSlotData> _savedSlots;
     
     
 
-    void Start()
+    private void OnEnable()
     {
+        AGameManager.Instance.MatchingSuccess += OnMatchingSuccess;
+        
+
+        if(ASavingManager.Instance.GameData.CardsGridData!=null && ASavingManager.Instance.GameData.CardsGridData.Rows!=0) GridData = ASavingManager.Instance.GameData.CardsGridData;
+    }
+
+    private void OnDisable()
+    {
+        AGameManager.Instance.MatchingSuccess -= OnMatchingSuccess;
+    }
+
+    private void OnMatchingSuccess()
+    {
+        _unmatchedCards -= 2;
+        Debug.Log("Unmatched Cards "+ _unmatchedCards);
+    }
+
+    public void Populate()
+    {
+        _unmatchedCards = 0;
         _scale = GetScale();
-        var cardsCount = Rows * Columns;
+        var cardsCount = GridData.Rows * GridData.Columns;
         _cardSlots = new ACardSlot[cardsCount];
+
+        if (ASavingManager.Instance.GameData.GameMode == AMainMenuController.AGameMode.Continue)
+        {
+            PopulateWithSavedGrid();
+            return;
+        }
+        
+        PopulateWithNewGrid();
+        
+    }
+
+    private void PopulateWithSavedGrid()
+    {
+        _savedSlots = ASavingManager.Instance.GameData.RemainingCards;
+        foreach (var savedSlot in _savedSlots)
+        {
+            SpawnACard(savedSlot.Index,savedSlot.CardValue);
+        }
+
+        for (int i = 0; i < _cardSlots.Length; i++)
+        {
+            if (!_cardSlots[i])
+            {
+                SpawnSlot(i);
+                _cardSlots[i].ClearSlot();
+            }
+        }
+    }
+
+    private void PopulateWithNewGrid()
+    {
         var baseWeight = GetWeight();
         var weightsDistribution = GetDistribution(baseWeight);
         for (int i = 0; i < _cardSlots.Length; i++)
@@ -38,18 +104,18 @@ public class ACardsGrid : MonoBehaviour
 
     private int GetWeight()
     {
-        return (Rows * Columns) / Variations;
+        return (GridData.Rows * GridData.Columns) / GridData.Variations;
     }
 
     private Dictionary<int, int> GetDistribution(int baseWeight)
     {
-        var upperWeightCount = (Rows * Columns) % Variations;
+        var upperWeightCount = (GridData.Rows * GridData.Columns) % GridData.Variations;
         //Debug.Log("UpperWeightCount= "+upperWeightCount);
         Dictionary<int, int> Distributions = new Dictionary<int, int>();
-        for (int i = 0; i < Variations; i++)
+        for (int i = 0; i < GridData.Variations; i++)
         {
             int value = GetRandomValue(Distributions);
-            int weight = (i < upperWeightCount) ? (baseWeight + 1) : baseWeight;
+            int weight = (i < upperWeightCount/2) ? (baseWeight + 2) : baseWeight;
             Distributions.Add(value,weight);
             //Debug.Log("value= "+value+ " weight: "+ weight);
         }
@@ -80,31 +146,64 @@ public class ACardsGrid : MonoBehaviour
         return value;
     }
 
+    private void SpawnSlot(int position)
+    {
+        var spawnPosition = GetPosition(position);
+        _cardSlots[position] = Instantiate<ACardSlot>(CardSlotPrefab,spawnPosition,Quaternion.identity);
+    }
+
     private void SpawnACard(int position, int cardValue)
     {
         var spawnPosition = GetPosition(position);
         _cardSlots[position] = Instantiate<ACardSlot>(CardSlotPrefab,spawnPosition,Quaternion.identity);
-        _cardSlots[position].transform.localScale = _scale;
         _cardSlots[position].FillSlot(Instantiate<ACard>(CardPrefab, spawnPosition, Quaternion.identity));
+        _cardSlots[position].Card.transform.SetParent(_cardSlots[position].transform);
         _cardSlots[position].Card.Value = cardValue;
-        _cardSlots[position].Card.transform.localScale = _scale;
+        _cardSlots[position].transform.localScale = _scale;
+        _unmatchedCards++;
     }
 
     Vector3 GetPosition(int i)
     {
         
-        int rowIndex = i / Columns;
-        int columnIndex =  i % Columns;
-        float rowPosition = (Height / (float)Rows) * rowIndex;
-        float columnPosition = (Width /(float) Columns) * columnIndex;
+        int rowIndex = i / GridData.Columns;
+        int columnIndex =  i % GridData.Columns;
+        float rowPosition = (GridData.Height / (float)GridData.Rows) * rowIndex - GridData.Width/2;
+        float columnPosition = (GridData.Width /(float) GridData.Columns) * columnIndex - GridData.Height/2;
         var spawnLocation = new Vector3(columnPosition, rowPosition, 0);
         return spawnLocation;
     }
 
     Vector3 GetScale()
     {
-        float WidthScale = (Width-1) / ((float)Columns * 3);
-        float HeightScale = (Height-1) / ((float)Rows * 5);
-        return new Vector3(WidthScale, HeightScale, 1);
+        float WidthScale = (GridData.Width) / ((float)GridData.Columns * 3);
+        float HeightScale = (GridData.Height) / ((float)GridData.Rows * 5);
+        return new Vector3(WidthScale*0.9f, HeightScale*0.9f, 1);
+    }
+
+    public void FlipAllCards()
+    {
+        foreach (var cardSlot in _cardSlots)
+        {
+            if(cardSlot.Card != null)cardSlot.Card.Flip();
+        }
+    }
+
+    public List<ACardSlot.ACardSlotData> GetRemainingCards()
+    {
+        var remainingCards = new List<ACardSlot.ACardSlotData>();
+        for (int i = 0; i < _cardSlots.Length; i++)
+        {
+            if(_cardSlots[i].IsEmpty) continue;
+            var cardData = new ACardSlot.ACardSlotData()
+            {
+                CardValue = _cardSlots[i].Card.Value,
+                Index = i
+            };
+            remainingCards.Add(cardData);
+            
+        }
+
+        return remainingCards;
     }
 }

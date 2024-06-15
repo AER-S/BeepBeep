@@ -15,7 +15,7 @@ public class Singleton<T>: MonoBehaviour where T: Singleton<T>
     protected void Awake()
     {
         if (_instance==null) _instance = (T)this;
-        else Destroy(this);
-        DontDestroyOnLoad(this);
+        else if(gameObject)Destroy(gameObject);
+        
     }
 }
