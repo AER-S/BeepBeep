@@ -19,10 +19,10 @@ public class AEndGamePanelController : MonoBehaviour
     private void OnEnable()
     {
         AGameManager.Instance.GameOver += ProcessEndGame;
-        QuitButton.onClick.AddListener(QuitGame);
+        QuitButton.onClick.AddListener(Application.Quit);
         RestartButton.onClick.AddListener(Restart);
         ContinueButton.onClick.AddListener(Continue);
-        HomeButton.onClick.AddListener(GoHome);
+        HomeButton.onClick.AddListener(AHUDController.Instance.GoHome);
     }
 
 
@@ -30,14 +30,10 @@ public class AEndGamePanelController : MonoBehaviour
     private void OnDisable()
     {
         AGameManager.Instance.GameOver -= ProcessEndGame;
-        QuitButton.onClick.RemoveListener(QuitGame);
+        QuitButton.onClick.RemoveListener(Application.Quit);
         RestartButton.onClick.RemoveListener(Restart);
         ContinueButton.onClick.RemoveListener(Continue);
-        HomeButton.onClick.AddListener(GoHome);
-    }
-    private void GoHome()
-    {
-        SceneManager.LoadScene(0);
+        HomeButton.onClick.AddListener(AHUDController.Instance.GoHome);
     }
     private void ProcessEndGame(bool gameWon)
     {
@@ -58,11 +54,7 @@ public class AEndGamePanelController : MonoBehaviour
         Title.color = Color.red;
         ContinueButton.gameObject.SetActive(false);
     }
-
-    private void QuitGame()
-    {
-        Application.Quit();
-    }
+    
 
     private void Restart()
     {
