@@ -168,8 +168,8 @@ public class ACardsGrid : MonoBehaviour
         
         int rowIndex = i / GridData.Columns;
         int columnIndex =  i % GridData.Columns;
-        float rowPosition = (GridData.Height / (float)GridData.Rows) * rowIndex;
-        float columnPosition = (GridData.Width /(float) GridData.Columns) * columnIndex;
+        float rowPosition = (GridData.Height / (float)GridData.Rows) * rowIndex - GridData.Width/2;
+        float columnPosition = (GridData.Width /(float) GridData.Columns) * columnIndex - GridData.Height/2;
         var spawnLocation = new Vector3(columnPosition, rowPosition, 0);
         return spawnLocation;
     }
@@ -195,7 +195,6 @@ public class ACardsGrid : MonoBehaviour
         for (int i = 0; i < _cardSlots.Length; i++)
         {
             if(_cardSlots[i].IsEmpty) continue;
-            Debug.Log("SavingSlot...");
             var cardData = new ACardSlot.ACardSlotData()
             {
                 CardValue = _cardSlots[i].Card.Value,
