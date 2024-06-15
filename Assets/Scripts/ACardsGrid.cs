@@ -155,6 +155,7 @@ public class ACardsGrid : MonoBehaviour
     private void SpawnACard(int position, int cardValue)
     {
         var spawnPosition = GetPosition(position);
+        _cardSlots[position] = Instantiate<ACardSlot>(CardSlotPrefab,spawnPosition,Quaternion.identity);
         _cardSlots[position].FillSlot(Instantiate<ACard>(CardPrefab, spawnPosition, Quaternion.identity));
         _cardSlots[position].Card.transform.SetParent(_cardSlots[position].transform);
         _cardSlots[position].Card.Value = cardValue;
