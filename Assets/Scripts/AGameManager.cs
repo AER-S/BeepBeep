@@ -11,13 +11,12 @@ public class AGameManager : Singleton<AGameManager>
     [SerializeField] private float CardsShowingTime;
     [SerializeField] private float LevelTime;
 
-    public float RemainingTime
-    {
-        get => _levelTime;
-    }
-    
+    public float RemainingTime => _levelTime;
+
     public bool IsGameOver { get; private set; }
     public bool IsWin { get; private set; }
+
+    
 
     public ACardsGrid CardGrid => CardsGrid;
 
@@ -68,7 +67,7 @@ public class AGameManager : Singleton<AGameManager>
         _cardsCouples = new Queue<CardsCouple>();
         IsGameOver = false;
         IsWin = false;
-        _levelTime = LevelTime;
+        _levelTime = (!ASavingManager.Instance.GameData.IsLastGameOver)? ASavingManager.Instance.GameData.RemainingTime:LevelTime;
         Debug.Log("Game Start...");
         StartCoroutine(ShowHideCards());
     }
@@ -92,7 +91,7 @@ public class AGameManager : Singleton<AGameManager>
         }
         
         _levelTime = Mathf.Max(_levelTime-Time.deltaTime,0);
-        if (_levelTime <= 0 && _unmatchedCards > 0 && !IsGameOver)
+        if (_levelTime <= 0 && CardsGrid.UnmatchedCards > 0 && !IsGameOver)
         {
             GameOver?.Invoke(false);
             IsGameOver = true;

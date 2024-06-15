@@ -57,7 +57,7 @@ public class AScoringSystem : Singleton<AScoringSystem>
     private void LoadData()
     {
         if (ASavingManager.Instance.GameData == null) return;
-        if (ASavingManager.Instance.GameData.IsLastGameAWin)
+        if (ASavingManager.Instance.GameData.IsLastGameAWin || !ASavingManager.Instance.GameData.IsLastGameOver)
         {
             TurnsCounter = ASavingManager.Instance.GameData.TotalTurns;
             Score = ASavingManager.Instance.GameData.TotalScore;

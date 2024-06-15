@@ -151,16 +151,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 86f0fd4fbbb7394448612903ed829812, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Width: 16
-  Height: 16
+  GridData:
+    Width: 16
+    Height: 16
+    Rows: 4
+    Columns: 4
+    Variations: 8
   CardPrefab: {fileID: -4216070001518647358, guid: a9c7c383a58ce9d4c9d3f7b43acc94e1,
     type: 3}
   CardSlotPrefab: {fileID: 1815852723985304303, guid: fd3ed96f4822e8a48a6aa3cef457d900,
     type: 3}
-  <Rows>k__BackingField: 4
-  <Columns>k__BackingField: 4
   VisualProvider: {fileID: 11400000, guid: ac4b9a0e452df7a4b8b28c478d34c11d, type: 2}
-  Variations: 8
 --- !u!4 &70774604
 Transform:
   m_ObjectHideFlags: 0

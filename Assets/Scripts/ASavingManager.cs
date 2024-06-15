@@ -14,6 +14,7 @@ public class ASavingManager : Singleton<ASavingManager>
     {
         public bool IsLastGameOver;
         public bool IsLastGameAWin;
+        public float RemainingTime;
         public int TotalScore;
         public int TotalTurns;
         public int Combos;
@@ -55,19 +56,24 @@ public class ASavingManager : Singleton<ASavingManager>
 
     private void SaveData()
     {
-        if(!AGameManager.Instance) return;
-        if(!AScoringSystem.Instance) return;
-        GameData = new AGameData
+        if (GameData == null) GameData = new AGameData();
+
+
+        if (AGameManager.Instance)
         {
-            IsLastGameOver = AGameManager.Instance.IsGameOver,
-            IsLastGameAWin = AGameManager.Instance.IsWin,
-            RemainingCards = AGameManager.Instance.CardGrid.GetRemainingCards(),
-            CardsGridData = AGameManager.Instance.CardGrid.CardsGridData,
-            TotalScore = AScoringSystem.Instance.Score,
-            TotalTurns = AScoringSystem.Instance.TurnsCounter,
-            Combos = AScoringSystem.Instance.ComboCounter
-        };
-        
+            GameData.IsLastGameOver = AGameManager.Instance.IsGameOver;
+            GameData.IsLastGameAWin = AGameManager.Instance.IsWin;
+            GameData.RemainingCards = AGameManager.Instance.CardGrid.GetRemainingCards();
+            GameData.CardsGridData = AGameManager.Instance.CardGrid.CardsGridData;
+            GameData.RemainingTime = AGameManager.Instance.RemainingTime;
+        }
+
+        if (AScoringSystem.Instance)
+        {
+            GameData.TotalScore = AScoringSystem.Instance.Score;
+            GameData.TotalTurns = AScoringSystem.Instance.TurnsCounter;
+            GameData.Combos = AScoringSystem.Instance.ComboCounter;
+        }
         string json = JsonUtility.ToJson(GameData);
         
         File.WriteAllText(_saveFilePath, json);
