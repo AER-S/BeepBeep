@@ -1,7 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
+
+using System;
 using UnityEngine;
-using UnityEngine.Serialization;
+using UnityEngine.Events;
+
 
 public class ACard : MonoBehaviour
 {
@@ -10,6 +11,9 @@ public class ACard : MonoBehaviour
     [SerializeField] private MeshRenderer Back;
     [SerializeField] private MeshRenderer Front;
     [SerializeField] private VisualProvider VisualProvider;
+
+    public Action FlipCard;
+    public Action DestroyCard;
     
 
     [field: SerializeField]
@@ -20,10 +24,14 @@ public class ACard : MonoBehaviour
     public void Flip()
     {
         Isflipped= !Isflipped;
-        var rotation = transform.eulerAngles;
-        rotation = new Vector3(rotation.x, rotation.y + 180,rotation.z);
-        transform.eulerAngles = rotation;
+        FlipCard?.Invoke();
     }
+
+    public void Destroy()
+    {
+        DestroyCard?.Invoke();
+    }
+    
     
     // Start is called before the first frame update
     void Start()
