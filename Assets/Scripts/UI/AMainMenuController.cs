@@ -8,7 +8,7 @@ using UnityEngine.UI;
 
 public class AMainMenuController : Singleton<AMainMenuController>
 {
-    [SerializeField] private GameObject MainMenuPanel;
+    [SerializeField] private GameObject OptionsMenuPanel;
     [SerializeField] private Button ContinueButton;
     [SerializeField] private Button NewGameButton;
     [SerializeField] private Button OptionsButton;
@@ -24,8 +24,7 @@ public class AMainMenuController : Singleton<AMainMenuController>
     
     private void OnEnable()
     {
-        if(ASavingManager.Instance.GameData.IsLastGameOver) ContinueButton.gameObject.SetActive(false);
-        else ContinueButton.onClick.AddListener(ContinueGame);
+        ShowHideContinueButton();
         NewGameButton.onClick.AddListener(NewGame);
         OptionsButton.onClick.AddListener(OpenOptionsMenu);
         QuitButton.onClick.AddListener(Application.Quit);
@@ -41,7 +40,13 @@ public class AMainMenuController : Singleton<AMainMenuController>
 
     private void OpenOptionsMenu()
     {
-        throw new NotImplementedException();
+        OptionsMenuPanel.SetActive(true);
+    }
+
+    private void ShowHideContinueButton()
+    {
+        if(ASavingManager.Instance.GameData.IsLastGameOver) ContinueButton.gameObject.SetActive(false);
+        else ContinueButton.onClick.AddListener(ContinueGame);
     }
 
     private void NewGame()
@@ -56,5 +61,10 @@ public class AMainMenuController : Singleton<AMainMenuController>
         SceneManager.LoadScene(1);
     }
 
-    
+
+    public void CloseOptionsMenu()
+    {
+        ShowHideContinueButton();
+        OptionsMenuPanel.SetActive(false);
+    }
 }

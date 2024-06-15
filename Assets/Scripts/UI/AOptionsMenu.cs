@@ -16,19 +16,66 @@ public class AOptionsMenu : Singleton<AOptionsMenu>
     [SerializeField] private TMP_Text RowsValue;
     [SerializeField] private TMP_Text ColumnsValue;
     [SerializeField] private TMP_Text VariationsValue;
+
+    [SerializeField] private Button SaveButton;
+    [SerializeField] private Button BackButton;
     
 
-    [SerializeField] private VisualProvider VisualProvider;
+    
 
 
     private void OnEnable()
     {
+        SaveButton.onClick.AddListener(SaveOptions);
+        BackButton.onClick.AddListener(BackToMainMenu);
+        
         RowsSlider.onValueChanged.AddListener(OnRowsSliderChanged);
         ColumnsSlider.onValueChanged.AddListener(OnColumnsSliderChanged);
         ColumnsSlider.wholeNumbers = false;
         
         SetupVariations();
         Variations.onValueChanged.AddListener(OnVariationsSliderChanged);
+
+        LoadData();
+    }
+
+    private void LoadData()
+    {
+        if (ASavingManager.Instance.GameData.CardsGridData!=null)
+        {
+            RowsSlider.value = ASavingManager.Instance.GameData.CardsGridData.Rows;
+            ColumnsSlider.value = ASavingManager.Instance.GameData.CardsGridData.Columns;
+            Variations.value = ASavingManager.Instance.GameData.CardsGridData.Columns;
+        }
+    }
+
+    private void OnDisable()
+    {
+        SaveButton.onClick.RemoveListener(SaveOptions);
+        BackButton.onClick.RemoveListener(BackToMainMenu);
+        RowsSlider.onValueChanged.RemoveListener(OnRowsSliderChanged);
+        ColumnsSlider.onValueChanged.RemoveListener(OnColumnsSliderChanged);
+        Variations.onValueChanged.RemoveListener(OnVariationsSliderChanged);
+    }
+
+    private void BackToMainMenu()
+    {
+        AMainMenuController.Instance.CloseOptionsMenu();
+    }
+
+    private void SaveOptions()
+    {
+        if (Math.Abs(ASavingManager.Instance.GameData.CardsGridData.Columns - ColumnsSlider.value) > 0.1f ||
+            Math.Abs(ASavingManager.Instance.GameData.CardsGridData.Rows - RowsSlider.value) > 0.1f ||
+            Math.Abs(ASavingManager.Instance.GameData.CardsGridData.Variations - Variations.value) > 0.1f)
+        {
+            ASavingManager.Instance.GameData.CardsGridData.Rows = (int)RowsSlider.value;
+            ASavingManager.Instance.GameData.CardsGridData.Columns = (int)ColumnsSlider.value;
+            ASavingManager.Instance.GameData.CardsGridData.Variations = (int)Variations.value;
+            ASavingManager.Instance.GameData.IsLastGameOver = true;
+            ASavingManager.Instance.GameData.IsLastGameAWin = false;
+        }
+        BackToMainMenu();
     }
 
     private void OnRowsSliderChanged(float value)
@@ -61,17 +108,5 @@ public class AOptionsMenu : Singleton<AOptionsMenu>
         RowsValue.text = RowsSlider.value.ToString("00");
         ColumnsValue.text = ColumnsSlider.value.ToString("00");
     }
-
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        UpdateDisplay();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    
 }
