@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class ACardSlot : MonoBehaviour
 {
@@ -31,6 +32,7 @@ public class ACardSlot : MonoBehaviour
 
     private void OnMouseDown()
     {
+        if(EventSystem.current.IsPointerOverGameObject()) return;
         if(IsEmpty) return;
         if(!Card.Isflipped) return;
         AGameManager.Instance.TakeSlot(this);
