@@ -58,7 +58,12 @@ public class AScoringSystem : Singleton<AScoringSystem>
     
     private void LoadData()
     {
-        if (ASavingManager.Instance.GameData.IsLastGameAWin || ASavingManager.Instance.GameData.GameMode == AMainMenuController.AGameMode.Continue)
+        var firstCondition = !ASavingManager.Instance.GameData.IsLastGameOver &&
+                             ASavingManager.Instance.GameData.GameMode == AMainMenuController.AGameMode.Continue;
+        var secondCondition = ASavingManager.Instance.GameData.IsLastGameOver &&
+                              ASavingManager.Instance.GameData.IsLastGameAWin &&
+                              ASavingManager.Instance.GameData.GameMode == AMainMenuController.AGameMode.WinStrike; 
+        if (firstCondition || secondCondition )
         {
             _turnsCounter = ASavingManager.Instance.GameData.TotalTurns;
             _score = ASavingManager.Instance.GameData.TotalScore;

@@ -22,10 +22,9 @@ public class AEndGamePanelController : MonoBehaviour
         QuitButton.onClick.AddListener(Application.Quit);
         RestartButton.onClick.AddListener(Restart);
         ContinueButton.onClick.AddListener(Continue);
-        HomeButton.onClick.AddListener(AHUDController.Instance.GoHome);
+        HomeButton.onClick.AddListener(GoHome);
     }
-
-
+    
 
     private void OnDisable()
     {
@@ -33,8 +32,10 @@ public class AEndGamePanelController : MonoBehaviour
         QuitButton.onClick.RemoveListener(Application.Quit);
         RestartButton.onClick.RemoveListener(Restart);
         ContinueButton.onClick.RemoveListener(Continue);
-        HomeButton.onClick.AddListener(AHUDController.Instance.GoHome);
+        HomeButton.onClick.AddListener(GoHome);
     }
+
+    
     private void ProcessEndGame(bool gameWon)
     {
         if(gameWon)OnGameWon();
@@ -55,18 +56,24 @@ public class AEndGamePanelController : MonoBehaviour
         ContinueButton.gameObject.SetActive(false);
     }
     
+    private void GoHome()
+    {
+        if (AGameManager.Instance.IsWin)
+            ASavingManager.Instance.GameData.GameMode = AMainMenuController.AGameMode.WinStrike;
+        else ASavingManager.Instance.GameData.GameMode = AMainMenuController.AGameMode.NewGame;
+        AHUDController.Instance.GoHome();
+    }
 
     private void Restart()
     {
-        ASavingManager.Instance.GameData.GameMode = AMainMenuController.AGameMode.NewGame;
+        ASavingManager.Instance.GameData.GameMode = AMainMenuController.AGameMode.Restart;
         ASavingManager.Instance.GameData.IsLastGameAWin = false;
         SceneManager.LoadScene(1);
     }
 
     private void Continue()
     {
-        ASavingManager.Instance.GameData.GameMode = AMainMenuController.AGameMode.NewGame;
-        ASavingManager.Instance.GameData.IsLastGameAWin = true;
+        ASavingManager.Instance.GameData.GameMode = AMainMenuController.AGameMode.WinStrike;
         SceneManager.LoadScene(1);
     }
 

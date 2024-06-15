@@ -19,7 +19,9 @@ public class AMainMenuController : Singleton<AMainMenuController>
     {
         None,
         Continue,
-        NewGame
+        NewGame,
+        Restart,
+        WinStrike
     }
     
     private void OnEnable()
@@ -51,7 +53,7 @@ public class AMainMenuController : Singleton<AMainMenuController>
 
     private void ShowHideContinueButton()
     {
-        if(ASavingManager.Instance.GameData.IsLastGameOver) ContinueButton.gameObject.SetActive(false);
+        if(ASavingManager.Instance.GameData.IsLastGameOver && ASavingManager.Instance.GameData.GameMode != AGameMode.WinStrike) ContinueButton.gameObject.SetActive(false);
         else ContinueButton.onClick.AddListener(ContinueGame);
     }
 
@@ -63,7 +65,8 @@ public class AMainMenuController : Singleton<AMainMenuController>
 
     private void ContinueGame()
     {
-        ASavingManager.Instance.GameData.GameMode = AGameMode.Continue;
+        if(ASavingManager.Instance.GameData.GameMode != AGameMode.WinStrike || !ASavingManager.Instance.GameData.IsLastGameOver)ASavingManager.Instance.GameData.GameMode = AGameMode.Continue;
+        Debug.Log("Game Mode "+Enum.GetName(typeof(AGameMode),ASavingManager.Instance.GameData.GameMode));
         SceneManager.LoadScene(1);
     }
 
