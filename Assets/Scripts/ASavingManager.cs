@@ -20,18 +20,20 @@ public class ASavingManager : Singleton<ASavingManager>
         public int Combos;
         public List<ACardSlot.ACardSlotData> RemainingCards;
         public ACardsGrid.ACardsGridData CardsGridData;
+        public AMainMenuController.AGameMode GameMode;
     }
     
     public AGameData GameData { get; private set; }
     new void Awake()
     {
+        
         base.Awake();
         DontDestroyOnLoad(this);
-        _saveFilePath = Application.persistentDataPath + "/GameData.json";
     }
 
     private void OnEnable()
     {
+        _saveFilePath = Application.persistentDataPath + "/GameData.json";
         SceneManager.sceneUnloaded += SaveData;
         SceneManager.sceneLoaded += LoadData;
         LoadData();
@@ -51,7 +53,7 @@ public class ASavingManager : Singleton<ASavingManager>
     {
         SceneManager.sceneUnloaded -= SaveData;
         SceneManager.sceneLoaded -= LoadData;
-        SaveData();
+        if(this == Instance)SaveData();
     }
 
     private void SaveData()
@@ -74,6 +76,7 @@ public class ASavingManager : Singleton<ASavingManager>
             GameData.TotalTurns = AScoringSystem.Instance.TurnsCounter;
             GameData.Combos = AScoringSystem.Instance.ComboCounter;
         }
+        
         string json = JsonUtility.ToJson(GameData);
         
         File.WriteAllText(_saveFilePath, json);
@@ -94,6 +97,6 @@ public class ASavingManager : Singleton<ASavingManager>
 
     private void OnApplicationQuit()
     {
-        SaveData();
+        if(this == Instance) SaveData();
     }
 }

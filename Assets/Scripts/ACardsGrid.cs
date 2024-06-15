@@ -40,18 +40,14 @@ public class ACardsGrid : MonoBehaviour
     private void OnEnable()
     {
         AGameManager.Instance.MatchingSuccess += OnMatchingSuccess;
-        if(ASavingManager.Instance.GameData == null) return;
-        if (!ASavingManager.Instance.GameData.IsLastGameOver)
-        {
-            _savedSlots = ASavingManager.Instance.GameData.RemainingCards;
-        }
+        
 
         if(ASavingManager.Instance.GameData.CardsGridData!=null && ASavingManager.Instance.GameData.CardsGridData.Rows!=0) GridData = ASavingManager.Instance.GameData.CardsGridData;
     }
 
     private void OnDisable()
     {
-        AGameManager.Instance.MatchingSuccess += OnMatchingSuccess;
+        AGameManager.Instance.MatchingSuccess -= OnMatchingSuccess;
     }
 
     private void OnMatchingSuccess()
@@ -65,8 +61,10 @@ public class ACardsGrid : MonoBehaviour
         _scale = GetScale();
         var cardsCount = GridData.Rows * GridData.Columns;
         _cardSlots = new ACardSlot[cardsCount];
-        if (_savedSlots is { Count: > 0 })
+        
+        if (ASavingManager.Instance.GameData.GameMode == AMainMenuController.AGameMode.Continue)
         {
+            _savedSlots = ASavingManager.Instance.GameData.RemainingCards;
             foreach (var savedSlot in _savedSlots)
             {
                 SpawnACard(savedSlot.Index,savedSlot.CardValue);
