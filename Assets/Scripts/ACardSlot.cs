@@ -34,7 +34,7 @@ public class ACardSlot : MonoBehaviour
     {
         if(EventSystem.current.IsPointerOverGameObject()) return;
         if(_isEmpty) return;
-        if(!Card.Isflipped) return;
+        if(!Card.IsFlipped) return;
         AGameManager.Instance.TakeSlot(this);
         Card.Flip();
     }
