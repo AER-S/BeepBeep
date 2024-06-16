@@ -7,53 +7,45 @@ using UnityEngine;
 [DefaultExecutionOrder(-2)]
 public class AGameManager : Singleton<AGameManager>
 {
-    [SerializeField] private ACardsGrid CardsGrid;
-    [SerializeField] private float CardsShowingTime;
-    [SerializeField] private float LevelTime;
-
-    public float RemainingTime => _levelTime;
-
-    public bool IsGameOver { get; private set; }
-    public bool IsWin { get; private set; }
-
+    #region SerializeField
+        [field:SerializeField] public ACardsGrid CardGrid { get; private set; }
+        [SerializeField] private float CardsShowingTime;
+        [SerializeField] private float LevelTime;
     
+    #endregion
 
-    public ACardsGrid CardGrid => CardsGrid;
-
-    private Queue<CardsCouple> _cardsCouples;
-
-    private CardsCouple CurrentCouple;
-
-    public Action MatchingSuccess;
-    public Action MatchingFailed;
-    public Action<bool> GameOver;
-
-    [SerializeField]private int _unmatchedCards;
-    private float _levelTime;
+    #region Public Actions
     
+        public Action MatchingSuccess;
+        public Action MatchingFailed;
+        public Action<bool> GameOver;
+    
+    #endregion
 
-    public struct CardsCouple
+    #region Public Getters
+
+        public bool IsGameOver { get; private set; }
+        public bool IsWin { get; private set; }
+        public float RemainingTime => _levelTime;
+
+    #endregion
+
+    #region Private members
+
+        private Queue<CardsCouple> _cardsCouples;
+        private CardsCouple _currentCouple;
+        private int _unmatchedCards;
+        private float _levelTime;
+
+    #endregion
+
+    private struct CardsCouple
     {
         public ACardSlot CardSlotA;
         public ACardSlot CardSlotB;
     }
 
-    public void TakeSlot(ACardSlot newSlot)
-    {
-        if (CurrentCouple.CardSlotA == null)
-        {
-            CurrentCouple.CardSlotA = newSlot;
-            return;
-        }
-        else
-        {
-            CurrentCouple.CardSlotB = newSlot;
-            _cardsCouples.Enqueue(CurrentCouple);
-            CurrentCouple = new CardsCouple();
-            CurrentCouple.CardSlotA = null;
-            CurrentCouple.CardSlotB = null;
-        }
-    }
+    #region Unity Events
 
     private void OnEnable()
     {
@@ -64,61 +56,78 @@ public class AGameManager : Singleton<AGameManager>
     {
         ASavingManager.Instance.SaveData();
     }
-
-    // Start is called before the first frame update
+    
     private void Start()
     {
-        //if(SceneManager.GetActiveScene().buildIndex != 0) return;
-        CardsGrid.Populate();
-        CurrentCouple.CardSlotA = null;
-        CurrentCouple.CardSlotB = null;
+        CardGrid.Populate();
+        _currentCouple.CardSlotA = null;
+        _currentCouple.CardSlotB = null;
         _cardsCouples = new Queue<CardsCouple>();
         IsGameOver = false;
         IsWin = false;
-        _levelTime = (ASavingManager.Instance.GameData.GameMode == AMainMenuController.AGameMode.Continue)? ASavingManager.Instance.GameData.RemainingTime:LevelTime;
+        _levelTime = (ASavingManager.Instance.GameData.GameMode == AMainMenuController.AGameMode.Continue)
+            ? ASavingManager.Instance.GameData.RemainingTime
+            : LevelTime;
         Debug.Log("Game Start...");
         StartCoroutine(ShowHideCards());
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
-        //if(SceneManager.GetActiveScene().buildIndex!=0) return;
+        if (IsGameOver) return;
+
+        _levelTime = Mathf.Max(_levelTime - Time.deltaTime, 0);
+
+
         if (_cardsCouples.Count > 0)
         {
             var cardsCouple = _cardsCouples.Dequeue();
             ProcessResult(cardsCouple);
         }
 
-        if (CardsGrid.UnmatchedCards <= 0)
+        if (CardGrid.UnmatchedCards <= 0)
         {
             GameOver?.Invoke(true);
             IsGameOver = true;
             IsWin = true;
             return;
         }
-        
-        _levelTime = Mathf.Max(_levelTime-Time.deltaTime,0);
-        
-        if (_levelTime <= 0 && CardsGrid.UnmatchedCards > 0 && !IsGameOver)
+
+
+        if (_levelTime <= 0 && CardGrid.UnmatchedCards > 0)
         {
             GameOver?.Invoke(false);
             IsGameOver = true;
             IsWin = false;
         }
-        
-        
-        
-        
     }
 
+    #endregion
+    
+    public void TakeSlot(ACardSlot newSlot)
+    {
+        if (_currentCouple.CardSlotA == null)
+        {
+            _currentCouple.CardSlotA = newSlot;
+        }
+        else
+        {
+            _currentCouple.CardSlotB = newSlot;
+            _cardsCouples.Enqueue(_currentCouple);
+            _currentCouple = new CardsCouple
+            {
+                CardSlotA = null,
+                CardSlotB = null
+            };
+        }
+    }
+    
     IEnumerator FlipCardsCouple(CardsCouple cardCouple)
     {
         MatchingFailed?.Invoke();
         yield return new WaitForSecondsRealtime(1);
         cardCouple.CardSlotA.Card.Flip();
         cardCouple.CardSlotB.Card.Flip();
-
     }
 
     IEnumerator DestroyCards(CardsCouple cardsCouple)
@@ -142,10 +151,9 @@ public class AGameManager : Singleton<AGameManager>
     IEnumerator ShowHideCards()
     {
         yield return new WaitForSecondsRealtime(0.5f);
-        CardsGrid.FlipAllCards();
+        CardGrid.FlipAllCards();
         yield return new WaitForSecondsRealtime(CardsShowingTime);
-        CardsGrid.FlipAllCards();
+        CardGrid.FlipAllCards();
     }
     
-
 }

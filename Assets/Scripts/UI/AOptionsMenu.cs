@@ -5,22 +5,20 @@ using UnityEngine.UI;
 
 public class AOptionsMenu : Singleton<AOptionsMenu>
 {
+    #region SerializeField
+
     [SerializeField] private Slider RowsSlider;
-
     [SerializeField] private Slider ColumnsSlider;
-
     [SerializeField] private Slider Variations;
-
     [SerializeField] private TMP_Text RowsValue;
     [SerializeField] private TMP_Text ColumnsValue;
     [SerializeField] private TMP_Text VariationsValue;
-
     [SerializeField] private Button SaveButton;
     [SerializeField] private Button BackButton;
-    
 
-    
+    #endregion
 
+    #region Unity Events
 
     private void OnEnable()
     {
@@ -35,7 +33,19 @@ public class AOptionsMenu : Singleton<AOptionsMenu>
         Variations.onValueChanged.AddListener(OnVariationsSliderChanged);
 
         LoadData();
+        UpdateDisplay();
     }
+    
+    private void OnDisable()
+    {
+        SaveButton.onClick.RemoveListener(SaveOptions);
+        BackButton.onClick.RemoveListener(BackToMainMenu);
+        RowsSlider.onValueChanged.RemoveListener(OnRowsSliderChanged);
+        ColumnsSlider.onValueChanged.RemoveListener(OnColumnsSliderChanged);
+        Variations.onValueChanged.RemoveListener(OnVariationsSliderChanged);
+    }
+
+    #endregion
 
     private void LoadData()
     {
@@ -45,15 +55,6 @@ public class AOptionsMenu : Singleton<AOptionsMenu>
             ColumnsSlider.value = ASavingManager.Instance.GameData.CardsGridData.Columns;
             Variations.value = ASavingManager.Instance.GameData.CardsGridData.Columns;
         }
-    }
-
-    private void OnDisable()
-    {
-        SaveButton.onClick.RemoveListener(SaveOptions);
-        BackButton.onClick.RemoveListener(BackToMainMenu);
-        RowsSlider.onValueChanged.RemoveListener(OnRowsSliderChanged);
-        ColumnsSlider.onValueChanged.RemoveListener(OnColumnsSliderChanged);
-        Variations.onValueChanged.RemoveListener(OnVariationsSliderChanged);
     }
 
     private void BackToMainMenu()
@@ -90,7 +91,6 @@ public class AOptionsMenu : Singleton<AOptionsMenu>
     private void SetupVariations()
     {
         Variations.maxValue = RowsSlider.value * ColumnsSlider.value / 2;
-        
     }
 
     private void OnColumnsSliderChanged(float value)

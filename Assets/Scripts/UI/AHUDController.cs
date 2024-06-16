@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class AHUDController : Singleton<AHUDController>
 {
     [SerializeField] private Button HomeButton;
-
     [SerializeField] private Button QuitButton;
 
 

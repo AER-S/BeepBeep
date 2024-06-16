@@ -8,15 +8,21 @@ public class AScoringSystem : Singleton<AScoringSystem>
 {
     [SerializeField] private int ComboFactor;
 
+    #region public getters
+
     public int TurnsCounter => _turnsCounter;
     public int Score => _score;
     public int ComboCounter => _combosCounter;
+
+    #endregion
 
     public Action ScoreUpdated;
 
     private int _turnsCounter;
     private int _score;
     private int _combosCounter;
+
+    #region Unity Events
 
     new void Awake()
     {
@@ -41,6 +47,8 @@ public class AScoringSystem : Singleton<AScoringSystem>
         AGameManager.Instance.MatchingFailed -= ProcessMatchingFail;
     }
 
+    #endregion
+
     private void ProcessMatchingSuccess()
     {
         _turnsCounter++;
@@ -60,9 +68,11 @@ public class AScoringSystem : Singleton<AScoringSystem>
     {
         var firstCondition = !ASavingManager.Instance.GameData.IsLastGameOver &&
                              ASavingManager.Instance.GameData.GameMode == AMainMenuController.AGameMode.Continue;
+        
         var secondCondition = ASavingManager.Instance.GameData.IsLastGameOver &&
                               ASavingManager.Instance.GameData.IsLastGameAWin &&
-                              ASavingManager.Instance.GameData.GameMode == AMainMenuController.AGameMode.WinStrike; 
+                              ASavingManager.Instance.GameData.GameMode == AMainMenuController.AGameMode.WinStrike;
+        
         if (firstCondition || secondCondition )
         {
             _turnsCounter = ASavingManager.Instance.GameData.TotalTurns;
