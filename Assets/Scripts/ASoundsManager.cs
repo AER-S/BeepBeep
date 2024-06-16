@@ -1,5 +1,4 @@
 
-using UnityEditor.Callbacks;
 using UnityEngine;
 
 public class ASoundsManager : Singleton<ASoundsManager>
@@ -20,12 +19,19 @@ public class ASoundsManager : Singleton<ASoundsManager>
     {
         AGameManager.Instance.MatchingSuccess += PlaySuccessSound;
         AGameManager.Instance.MatchingFailed += PlayFailSound;
+        AGameManager.Instance.GameOver += PlayGameOverSound;
     }
+
 
     private void OnDisable()
     {
         AGameManager.Instance.MatchingSuccess -= PlaySuccessSound;
         AGameManager.Instance.MatchingFailed -= PlayFailSound;
+        AGameManager.Instance.GameOver -= PlayGameOverSound;
+    }
+    private void PlayGameOverSound(bool value)
+    {
+        MatchingAudioSource.PlayOneShot(GameOverSound);
     }
 
     private void PlayFailSound()

@@ -83,14 +83,18 @@ public class AGameManager : Singleton<AGameManager>
     // Update is called once per frame
     void Update()
     {
-        //if(SceneManager.GetActiveScene().buildIndex!=0) return;
+        if(IsGameOver) return;
+        
+        _levelTime = Mathf.Max(_levelTime-Time.deltaTime,0);
+        
+        
         if (_cardsCouples.Count > 0)
         {
             var cardsCouple = _cardsCouples.Dequeue();
             ProcessResult(cardsCouple);
         }
-
-        if (CardsGrid.UnmatchedCards <= 0)
+        
+        if (CardsGrid.UnmatchedCards <= 0 )
         {
             GameOver?.Invoke(true);
             IsGameOver = true;
@@ -98,19 +102,15 @@ public class AGameManager : Singleton<AGameManager>
             return;
         }
         
-        _levelTime = Mathf.Max(_levelTime-Time.deltaTime,0);
         
-        if (_levelTime <= 0 && CardsGrid.UnmatchedCards > 0 && !IsGameOver)
+        if (_levelTime <= 0 && CardsGrid.UnmatchedCards > 0)
         {
             GameOver?.Invoke(false);
             IsGameOver = true;
             IsWin = false;
         }
-        
-        
-        
-        
     }
+    
 
     IEnumerator FlipCardsCouple(CardsCouple cardCouple)
     {

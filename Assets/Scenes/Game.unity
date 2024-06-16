@@ -1690,7 +1690,7 @@ MonoBehaviour:
   MatchingSuccessSound: {fileID: 8300000, guid: de7f35368a6490449832daae9d06eb52,
     type: 3}
   MatchingFailedSound: {fileID: 8300000, guid: 58da083f7b0adcd4e9f5ec7d6c2c7093, type: 3}
-  GameOverSound: {fileID: 0}
+  GameOverSound: {fileID: 8300000, guid: b327631f4840f434ea8bb3aaad986079, type: 3}
   CardAudioSource: {fileID: 820573067}
   MatchingAudioSource: {fileID: 820573070}
 --- !u!4 &820573069
