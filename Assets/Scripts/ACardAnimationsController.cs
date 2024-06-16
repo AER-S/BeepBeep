@@ -6,10 +6,9 @@ using UnityEngine;
 public class ACardAnimationsController : MonoBehaviour
 {
     private ACard _card;
-
     private Animator _animator;
     
-    // Start is called before the first frame update
+    #region Unity Events
 
     private void Awake()
     {
@@ -29,16 +28,7 @@ public class ACardAnimationsController : MonoBehaviour
         _card.DestroyCard -= PlayDestroyAnimation;
     }
 
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    #endregion
 
     void PlayFlipAnimation()
     {
