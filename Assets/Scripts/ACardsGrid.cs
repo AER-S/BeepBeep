@@ -77,14 +77,16 @@ public class ACardsGrid : MonoBehaviour
         
         for (int i = 0; i < _cardSlots.Length; i++)
         {
-            if (i == _savedSlots[0].Index)
+            var spawnPosition = GetPosition(i);
+            if (_savedSlots.Count>0 && i == _savedSlots[0].Index)
             {
-                SpawnACard(_savedSlots[0].Index, _savedSlots[0].CardValue);
+                SpawnSlot(i,spawnPosition);
+                SpawnACard(_savedSlots[0].Index, _savedSlots[0].CardValue, spawnPosition);
                 _savedSlots.Remove(_savedSlots[0]);
                 continue;
             }
             
-            SpawnSlot(i);
+            SpawnSlot(i, spawnPosition);
             _cardSlots[i].ClearSlot();
         }
     }
@@ -95,8 +97,10 @@ public class ACardsGrid : MonoBehaviour
         var weightsDistribution = GetDistribution(baseWeight);
         for (int i = 0; i < _cardSlots.Length; i++)
         {
+            var spawnPosition = GetPosition(i);
             var cardValue = GetCardValueFrom(weightsDistribution);
-            SpawnACard(i,cardValue);
+            SpawnSlot(i,spawnPosition);
+            SpawnACard(i,cardValue, spawnPosition);
         }
     }
 
@@ -143,16 +147,14 @@ public class ACardsGrid : MonoBehaviour
         return value;
     }
 
-    private void SpawnSlot(int position)
+    private void SpawnSlot(int index, Vector3 spawnPosition)
     {
-        var spawnPosition = GetPosition(position);
-        _cardSlots[position] = Instantiate<ACardSlot>(CardSlotPrefab,spawnPosition,Quaternion.identity);
+        _cardSlots[index] = Instantiate<ACardSlot>(CardSlotPrefab,spawnPosition,Quaternion.identity);
+        _cardSlots[index].transform.SetParent(transform);
     }
 
-    private void SpawnACard(int position, int cardValue)
+    private void SpawnACard(int position, int cardValue, Vector3 spawnPosition)
     {
-        var spawnPosition = GetPosition(position);
-        _cardSlots[position] = Instantiate<ACardSlot>(CardSlotPrefab,spawnPosition,Quaternion.identity);
         _cardSlots[position].FillSlot(Instantiate<ACard>(CardPrefab, spawnPosition, Quaternion.identity));
         _cardSlots[position].Card.transform.SetParent(_cardSlots[position].transform);
         _cardSlots[position].Card.Value = cardValue;
