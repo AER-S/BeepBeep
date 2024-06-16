@@ -9,8 +9,6 @@ public class ACardsGrid : MonoBehaviour
     [Serializable]
     public class ACardsGridData
     {
-        public int Width;
-        public int Height;
         public int Rows;
         public int Columns;
         public int Variations;
@@ -18,9 +16,13 @@ public class ACardsGrid : MonoBehaviour
 
     #region SerializeField
 
+    [SerializeField] private int Width;
+    [SerializeField] private int Height;
     [SerializeField] private ACardsGridData GridData;
     [SerializeField] private ACard CardPrefab;
     [SerializeField] private ACardSlot CardSlotPrefab;
+    [SerializeField] private Vector2 CardDimensions;
+    [SerializeField] private float ScaleFactor;
     [SerializeField] private VisualProvider VisualProvider;
 
     #endregion
@@ -77,14 +79,16 @@ public class ACardsGrid : MonoBehaviour
         
         for (int i = 0; i < _cardSlots.Length; i++)
         {
-            if (i == _savedSlots[0].Index)
+            var spawnPosition = GetPosition(i);
+            if (_savedSlots.Count>0 && i == _savedSlots[0].Index)
             {
-                SpawnACard(_savedSlots[0].Index, _savedSlots[0].CardValue);
+                SpawnSlot(i,spawnPosition);
+                SpawnACard(_savedSlots[0].Index, _savedSlots[0].CardValue, spawnPosition);
                 _savedSlots.Remove(_savedSlots[0]);
                 continue;
             }
             
-            SpawnSlot(i);
+            SpawnSlot(i, spawnPosition);
             _cardSlots[i].ClearSlot();
         }
     }
@@ -95,8 +99,10 @@ public class ACardsGrid : MonoBehaviour
         var weightsDistribution = GetDistribution(baseWeight);
         for (int i = 0; i < _cardSlots.Length; i++)
         {
+            var spawnPosition = GetPosition(i);
             var cardValue = GetCardValueFrom(weightsDistribution);
-            SpawnACard(i,cardValue);
+            SpawnSlot(i,spawnPosition);
+            SpawnACard(i,cardValue, spawnPosition);
         }
     }
 
@@ -143,16 +149,14 @@ public class ACardsGrid : MonoBehaviour
         return value;
     }
 
-    private void SpawnSlot(int position)
+    private void SpawnSlot(int index, Vector3 spawnPosition)
     {
-        var spawnPosition = GetPosition(position);
-        _cardSlots[position] = Instantiate<ACardSlot>(CardSlotPrefab,spawnPosition,Quaternion.identity);
+        _cardSlots[index] = Instantiate<ACardSlot>(CardSlotPrefab,spawnPosition,Quaternion.identity);
+        _cardSlots[index].transform.SetParent(transform);
     }
 
-    private void SpawnACard(int position, int cardValue)
+    private void SpawnACard(int position, int cardValue, Vector3 spawnPosition)
     {
-        var spawnPosition = GetPosition(position);
-        _cardSlots[position] = Instantiate<ACardSlot>(CardSlotPrefab,spawnPosition,Quaternion.identity);
         _cardSlots[position].FillSlot(Instantiate<ACard>(CardPrefab, spawnPosition, Quaternion.identity));
         _cardSlots[position].Card.transform.SetParent(_cardSlots[position].transform);
         _cardSlots[position].Card.Value = cardValue;
@@ -162,19 +166,20 @@ public class ACardsGrid : MonoBehaviour
 
     Vector3 GetPosition(int i)
     {
+        var scale = GetScale();
         int rowIndex = i / GridData.Columns;
         int columnIndex =  i % GridData.Columns;
-        float rowPosition = (GridData.Height / (float)GridData.Rows) * rowIndex - GridData.Width/2;
-        float columnPosition = (GridData.Width /(float) GridData.Columns) * columnIndex - GridData.Height/2;
+        float rowPosition = (Height / (float)GridData.Rows) * rowIndex - Height/2+ scale.x * CardDimensions.x/2;
+        float columnPosition = (Width /(float) GridData.Columns) * columnIndex - Width/2+ scale.y * CardDimensions.y/2;
         var spawnLocation = new Vector3(columnPosition, rowPosition, 0);
         return spawnLocation;
     }
 
     Vector3 GetScale()
     {
-        float WidthScale = (GridData.Width) / ((float)GridData.Columns * 3);
-        float HeightScale = (GridData.Height) / ((float)GridData.Rows * 5);
-        return new Vector3(WidthScale*0.9f, HeightScale*0.9f, 1);
+        float WidthScale = (Width) / ((float)GridData.Columns * CardDimensions.x);
+        float HeightScale = (Height) / ((float)GridData.Rows * CardDimensions.y);
+        return new Vector3(WidthScale* ScaleFactor, HeightScale*ScaleFactor, 1);
     }
 
     public void FlipAllCards()
