@@ -285,10 +285,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ab3d168d23e6064da1fc3c8127cbe9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CardsGrid: {fileID: 70774603}
+  <CardGrid>k__BackingField: {fileID: 70774603}
   CardsShowingTime: 3
   LevelTime: 30
-  _unmatchedCards: 0
 --- !u!4 &134582728
 Transform:
   m_ObjectHideFlags: 0
