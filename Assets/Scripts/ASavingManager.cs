@@ -7,7 +7,6 @@ using UnityEngine;
 [DefaultExecutionOrder(-3)]
 public class ASavingManager : Singleton<ASavingManager>
 {
-    private string _saveFilePath;
     
     [System.Serializable]
     public class AGameData
@@ -24,6 +23,11 @@ public class ASavingManager : Singleton<ASavingManager>
     }
     
     public AGameData GameData { get; private set; }
+    
+    private string _saveFilePath;
+
+    #region Unity Events
+
     new void Awake()
     {
         
@@ -35,6 +39,18 @@ public class ASavingManager : Singleton<ASavingManager>
     {
         _saveFilePath = Application.persistentDataPath + "/GameData.json";
     }
+    
+    private void OnDisable()
+    {
+        if(this == Instance)SaveData();
+    }
+    
+    private void OnApplicationQuit()
+    {
+        if(this == Instance) SaveData();
+    }
+
+    #endregion
 
     public void LoadData()
     {
@@ -53,30 +69,12 @@ public class ASavingManager : Singleton<ASavingManager>
         };
     }
 
-    private void OnDisable()
-    {
-        if(this == Instance)SaveData();
-    }
+   
 
     public void SaveData()
     {
-        if (AGameManager.Instance)
-        {
-            GameData.IsLastGameOver = AGameManager.Instance.IsGameOver;
-            GameData.IsLastGameAWin = AGameManager.Instance.IsWin;
-            GameData.RemainingCards = AGameManager.Instance.CardGrid.GetRemainingCards();
-            GameData.CardsGridData = AGameManager.Instance.CardGrid.CardsGridData;
-            GameData.RemainingTime = AGameManager.Instance.RemainingTime;
-            Debug.Log("Saving Game Manager....");
-        }
-
-        if (AScoringSystem.Instance)
-        {
-            GameData.TotalScore = AScoringSystem.Instance.Score;
-            GameData.TotalTurns = AScoringSystem.Instance.TurnsCounter;
-            GameData.Combos = AScoringSystem.Instance.ComboCounter;
-            Debug.Log("SavingScore");
-        }
+        SaveGameManagerData();
+        SaveScoreData();
         
         string json = JsonUtility.ToJson(GameData);
         
@@ -86,8 +84,27 @@ public class ASavingManager : Singleton<ASavingManager>
         Debug.Log(Application.persistentDataPath);
     }
 
-    private void OnApplicationQuit()
+    private void SaveGameManagerData()
     {
-        if(this == Instance) SaveData();
+        if (AGameManager.Instance)
+        {
+            GameData.IsLastGameOver = AGameManager.Instance.IsGameOver;
+            GameData.IsLastGameAWin = AGameManager.Instance.IsWin;
+            GameData.RemainingCards = AGameManager.Instance.CardGrid.GetRemainingCards();
+            GameData.CardsGridData = AGameManager.Instance.CardGrid.CardsGridData;
+            GameData.RemainingTime = AGameManager.Instance.RemainingTime;
+        }
     }
+
+    private void SaveScoreData()
+    {
+        if (AScoringSystem.Instance)
+        {
+            GameData.TotalScore = AScoringSystem.Instance.Score;
+            GameData.TotalTurns = AScoringSystem.Instance.TurnsCounter;
+            GameData.Combos = AScoringSystem.Instance.ComboCounter;
+            
+        }
+    }
+    
 }
