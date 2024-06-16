@@ -5,24 +5,27 @@ using UnityEngine;
 
 public class ACard : MonoBehaviour
 {
-    [SerializeField] private Texture backTexture;
+    #region SerializeField
+    
     [SerializeField] private Texture FrontTexture;
-    [SerializeField] private MeshRenderer Back;
     [SerializeField] private MeshRenderer Front;
     [SerializeField] private VisualProvider VisualProvider;
+    [field: SerializeField] public int Value { get; set; }
+
+    #endregion
+
+    #region Public Actions
 
     public Action FlipCard;
     public Action DestroyCard;
+
+    #endregion
     
-
-    [field: SerializeField]
-    public int Value { get; set; }
-
-    public bool Isflipped { get; private set; }
-
+    public bool IsFlipped { get; private set; }
+    
     public void Flip()
     {
-        Isflipped= !Isflipped;
+        IsFlipped= !IsFlipped;
         FlipCard?.Invoke();
     }
 
@@ -35,7 +38,7 @@ public class ACard : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Isflipped = true;
+        IsFlipped = true;
         FrontTexture = VisualProvider.GetTexture(Value);
         Front.material.mainTexture = FrontTexture;
     }

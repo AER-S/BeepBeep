@@ -285,10 +285,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0ab3d168d23e6064da1fc3c8127cbe9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CardsGrid: {fileID: 70774603}
+  <CardGrid>k__BackingField: {fileID: 70774603}
   CardsShowingTime: 3
   LevelTime: 30
-  _unmatchedCards: 0
 --- !u!4 &134582728
 Transform:
   m_ObjectHideFlags: 0
@@ -1690,7 +1689,7 @@ MonoBehaviour:
   MatchingSuccessSound: {fileID: 8300000, guid: de7f35368a6490449832daae9d06eb52,
     type: 3}
   MatchingFailedSound: {fileID: 8300000, guid: 58da083f7b0adcd4e9f5ec7d6c2c7093, type: 3}
-  GameOverSound: {fileID: 0}
+  GameOverSound: {fileID: 8300000, guid: b327631f4840f434ea8bb3aaad986079, type: 3}
   CardAudioSource: {fileID: 820573067}
   MatchingAudioSource: {fileID: 820573070}
 --- !u!4 &820573069

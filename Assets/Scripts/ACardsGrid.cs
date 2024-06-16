@@ -16,11 +16,14 @@ public class ACardsGrid : MonoBehaviour
         public int Variations;
     }
 
+    #region SerializeField
+
     [SerializeField] private ACardsGridData GridData;
     [SerializeField] private ACard CardPrefab;
     [SerializeField] private ACardSlot CardSlotPrefab;
+    [SerializeField] private VisualProvider VisualProvider;
 
-    [SerializeField]private VisualProvider VisualProvider;
+    #endregion
 
     public ACardsGridData CardsGridData => GridData;
     public int UnmatchedCards => _unmatchedCards;
@@ -30,8 +33,6 @@ public class ACardsGrid : MonoBehaviour
     private ACardSlot[] _cardSlots;
     private Vector3 _scale;
     private int _unmatchedCards;
-
-
     private List<ACardSlot.ACardSlotData> _savedSlots;
     
     
@@ -39,9 +40,8 @@ public class ACardsGrid : MonoBehaviour
     private void OnEnable()
     {
         AGameManager.Instance.MatchingSuccess += OnMatchingSuccess;
-        
-
-        if(ASavingManager.Instance.GameData.CardsGridData!=null && ASavingManager.Instance.GameData.CardsGridData.Rows!=0) GridData = ASavingManager.Instance.GameData.CardsGridData;
+        if(ASavingManager.Instance.GameData.CardsGridData!=null && ASavingManager.Instance.GameData.CardsGridData.Rows!=0) 
+            GridData = ASavingManager.Instance.GameData.CardsGridData;
     }
 
     private void OnDisable()
@@ -52,7 +52,6 @@ public class ACardsGrid : MonoBehaviour
     private void OnMatchingSuccess()
     {
         _unmatchedCards -= 2;
-        Debug.Log("Unmatched Cards "+ _unmatchedCards);
     }
 
     public void Populate()
@@ -75,18 +74,18 @@ public class ACardsGrid : MonoBehaviour
     private void PopulateWithSavedGrid()
     {
         _savedSlots = ASavingManager.Instance.GameData.RemainingCards;
-        foreach (var savedSlot in _savedSlots)
-        {
-            SpawnACard(savedSlot.Index,savedSlot.CardValue);
-        }
-
+        
         for (int i = 0; i < _cardSlots.Length; i++)
         {
-            if (!_cardSlots[i])
+            if (i == _savedSlots[0].Index)
             {
-                SpawnSlot(i);
-                _cardSlots[i].ClearSlot();
+                SpawnACard(_savedSlots[0].Index, _savedSlots[0].CardValue);
+                _savedSlots.Remove(_savedSlots[0]);
+                continue;
             }
+            
+            SpawnSlot(i);
+            _cardSlots[i].ClearSlot();
         }
     }
 
@@ -109,26 +108,26 @@ public class ACardsGrid : MonoBehaviour
     private Dictionary<int, int> GetDistribution(int baseWeight)
     {
         var upperWeightCount = (GridData.Rows * GridData.Columns) % GridData.Variations;
-        //Debug.Log("UpperWeightCount= "+upperWeightCount);
-        Dictionary<int, int> Distributions = new Dictionary<int, int>();
+        
+        Dictionary<int, int> distributions = new Dictionary<int, int>();
+        
         for (int i = 0; i < GridData.Variations; i++)
         {
-            int value = GetRandomValue(Distributions);
+            int value = GetRandomValue(distributions);
             int weight = (i < upperWeightCount/2) ? (baseWeight + 2) : baseWeight;
-            Distributions.Add(value,weight);
-            //Debug.Log("value= "+value+ " weight: "+ weight);
+            distributions.Add(value,weight);
         }
 
-        return Distributions;
+        return distributions;
     }
 
-    private int GetRandomValue(Dictionary<int,int> Distributions)
+    private int GetRandomValue(Dictionary<int,int> distributions)
     {
         int randomValue = 0;
         do
         {
             randomValue = Random.Range(0, VisualProvider.GetTextures().Length);
-        } while (Distributions.ContainsKey(randomValue));
+        } while (distributions.ContainsKey(randomValue));
 
         return randomValue;
     }
@@ -137,8 +136,7 @@ public class ACardsGrid : MonoBehaviour
     {
 
         int value = weightsDistributions.ElementAt(Random.Range(0, weightsDistributions.Count)).Key;
-        int weight=0;
-        weightsDistributions.TryGetValue(value, out weight);
+        int weight = weightsDistributions[value];
         --weight;
         if (weight <= 0) weightsDistributions.Remove(value);
         else weightsDistributions[value] = weight;
@@ -164,7 +162,6 @@ public class ACardsGrid : MonoBehaviour
 
     Vector3 GetPosition(int i)
     {
-        
         int rowIndex = i / GridData.Columns;
         int columnIndex =  i % GridData.Columns;
         float rowPosition = (GridData.Height / (float)GridData.Rows) * rowIndex - GridData.Width/2;
@@ -184,7 +181,7 @@ public class ACardsGrid : MonoBehaviour
     {
         foreach (var cardSlot in _cardSlots)
         {
-            if(cardSlot.Card != null)cardSlot.Card.Flip();
+            if(cardSlot.Card)cardSlot.Card.Flip();
         }
     }
 

@@ -6,11 +6,15 @@ using UnityEngine.UI;
 
 public class AMainMenuController : Singleton<AMainMenuController>
 {
+    #region SerializeField
+
     [SerializeField] private GameObject OptionsMenuPanel;
     [SerializeField] private Button ContinueButton;
     [SerializeField] private Button NewGameButton;
     [SerializeField] private Button OptionsButton;
     [SerializeField] private Button QuitButton;
+
+    #endregion
     
     [Serializable]
     public enum AGameMode
@@ -21,7 +25,9 @@ public class AMainMenuController : Singleton<AMainMenuController>
         Restart,
         WinStrike
     }
-    
+
+    #region Unity Events
+
     private void OnEnable()
     {
         ASavingManager.Instance.LoadData();
@@ -43,6 +49,8 @@ public class AMainMenuController : Singleton<AMainMenuController>
     {
         ShowHideContinueButton();
     }
+
+    #endregion
 
     private void OpenOptionsMenu()
     {
