@@ -26,6 +26,7 @@ public class AEndGamePanelController : MonoBehaviour
         RestartButton.onClick.AddListener(Restart);
         ContinueButton.onClick.AddListener(Continue);
         HomeButton.onClick.AddListener(GoHome);
+        GameOverPanel.SetActive(false);
     }
     
 
